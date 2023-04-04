@@ -10,18 +10,22 @@ function Login() {
 
   const navigate = useNavigate();
 
-  const login = event => {
+  const login = async event => {
     event.preventDefault();
-    axios.post("/login", { username, password }).then(response => {
-      //Checking if response is "ok" when JWT is created
+    axios.defaults.withCredentials = true;
+    try {
+      const response = await axios.post("/login", { username, password });
+      //checking use and password also sending jwt token
       if (response.data === "ok") {
         navigate("/");
       } else {
-        //setting Error
         console.log(response.data);
         setErrMessage(response.data);
       }
-    });
+    } catch (err) {
+      console.log(err);
+      setErrMessage("Error occurred during login");
+    }
   };
   return (
     <form className="login" onSubmit={login}>
