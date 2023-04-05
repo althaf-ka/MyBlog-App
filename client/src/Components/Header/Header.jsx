@@ -1,13 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "./Header.css";
 import { Link } from "react-router-dom";
 import axios from "../../../config/axios";
+import { UserContext } from "../../../Context/UserContext";
 
 function Header() {
-  const [username, setUsername] = useState("");
+  const { userInfo, setUserInfo } = useContext(UserContext);
   useEffect(() => {
     axios.get("/profile", { withCredentials: true }).then(response => {
-      setUsername(response.data.username);
+      setUserInfo(response.data);
     });
   }, []);
 
@@ -15,9 +16,11 @@ function Header() {
     axios.defaults.withCredentials = true;
     axios.post("/logout").then(response => {
       console.log(response);
-      setUsername(null);
+      setUserInfo(null);
     });
   };
+
+  const username = userInfo?.username;
 
   return (
     <header>

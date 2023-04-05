@@ -49,7 +49,7 @@ app.post("/login", (req, res) => {
             sameSite: "none",
             maxAge: 24 * 60 * 60 * 1000, // 1 days in milliseconds
           })
-          .json("ok");
+          .json({ _id, username });
       });
     })
     .catch(err => {
