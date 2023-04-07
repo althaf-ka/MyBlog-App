@@ -1,24 +1,19 @@
-const { MongoClient } = require("mongodb");
+import { MongoClient } from "mongodb";
 
-const state = {
-  db: null,
-};
+let db = null;
 
-module.exports.connect = function (done) {
+export const connect = async done => {
   const url = "mongodb://0.0.0.0:27017";
-  const client = new MongoClient(url);
+
   const dbName = "myBlogDB";
 
-  async function main() {
-    // Use connect method to connect to the server
-    await client.connect();
-    state.db = client.db(dbName);
-    return "Successfully Connected to Database";
+  try {
+    let data = await MongoClient.connect(url, { useNewUrlParser: true });
+    db = data.db(dbName);
+    done();
+  } catch (error) {
+    done(error);
   }
-
-  main().then(console.log).catch(console.error);
 };
 
-module.exports.get = function () {
-  return state.db;
-};
+export { db };

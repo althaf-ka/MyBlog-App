@@ -1,12 +1,14 @@
-const express = require("express");
-var cors = require("cors");
+import express, { response } from "express";
+import cors from "cors";
 const app = express();
-let dbHelpers = require("./blogHelpers/dbHelpers");
-let jwt = require("jsonwebtoken");
-let cookieParser = require("cookie-parser");
+import dbHelpers from "./blogHelpers/dbHelpers.js";
+import jwt from "jsonwebtoken";
+import cookieParser from "cookie-parser";
+import * as dotenv from "dotenv";
 
-var db = require("./db/connection");
-const secret = "adeqw!@3qte9852&A%D^@hbgfa";
+dotenv.config();
+import { connect as MongoConnect } from "./db/connection.js";
+import { postUpload } from "./blogHelpers/MulterUpload.js";
 
 const corsOptions = {
   origin: "http://localhost:5173",
@@ -16,9 +18,9 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
 
-db.connect(err => {
-  if (err) console.log("Error connecting to MongoDB:", err);
-  else console.log("Connected to MongoDB successfully");
+MongoConnect(error => {
+  if (error) return console.log("Database Connected Failed : ", error);
+  console.log("MongoDB connected");
 });
 
 app.post("/register", (req, res) => {
@@ -40,7 +42,7 @@ app.post("/login", (req, res) => {
     .then(response => {
       //When successful login JWT token setup
       const { _id, username } = response;
-      jwt.sign({ _id, username }, secret, {}, (err, token) => {
+      jwt.sign({ _id, username }, process.env.JWT_SECRET, {}, (err, token) => {
         if (err) throw err;
         res
           .cookie("token", token, {
@@ -61,7 +63,8 @@ app.post("/login", (req, res) => {
 app.get("/profile", (req, res) => {
   const { token } = req.cookies;
 
-  jwt.verify(token, secret, (err, info) => {
+  jwt.verify(token, process.env.JWT_SECRET, (err, info) => {
+    //Checking user token for login Verification
     if (err) {
       res.status(401).json({ message: "Unauthorized" });
       throw err;
@@ -72,6 +75,25 @@ app.get("/profile", (req, res) => {
 
 app.post("/logout", (req, res) => {
   res.cookie("token", "").json("Logged out successfully");
+});
+
+app.post("/post", postUpload.single("file"), (req, res) => {
+  const blog = req.body;
+  const coverImageURL = req.file ? req.file.filename : null;
+  const { token } = req.cookies;
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) {
+      res.status(401).json({ message: "Unauthorized" });
+      throw err;
+    } else {
+      //Saving blog Post to database
+      dbHelpers.addPost(blog, coverImageURL, user).then(response => {
+        console.log(response);
+        res.json(response);
+      });
+    }
+  });
 });
 
 app.listen(4000, () => {

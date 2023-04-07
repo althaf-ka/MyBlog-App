@@ -19,6 +19,7 @@ function Login() {
       const response = await axios.post("/login", { username, password });
       //checking if there user and also sending jwt token to store in cookie
       if (response.data.username) {
+        console.log(response);
         const { _id, username } = response.data;
         setUserInfo({ _id, username });
         navigate("/");
