@@ -68,4 +68,20 @@ export default {
       }
     });
   },
+
+  getAllPost: () => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const blogs = await db
+          .collection(collection.POSTS_COLLECTION)
+          .find()
+          .sort({ createdAt: -1 })
+          .limit(25)
+          .toArray();
+        resolve(blogs);
+      } catch (err) {
+        console.log(err);
+      }
+    });
+  },
 };

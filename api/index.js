@@ -5,6 +5,8 @@ import dbHelpers from "./blogHelpers/dbHelpers.js";
 import jwt from "jsonwebtoken";
 import cookieParser from "cookie-parser";
 import * as dotenv from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
 
 dotenv.config();
 import { connect as MongoConnect } from "./db/connection.js";
@@ -17,6 +19,9 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 MongoConnect(error => {
   if (error) return console.log("Database Connected Failed : ", error);
@@ -93,6 +98,12 @@ app.post("/post", postUpload.single("file"), (req, res) => {
         res.json(response);
       });
     }
+  });
+});
+
+app.get("/post", (req, res) => {
+  dbHelpers.getAllPost().then(blogPosts => {
+    res.json(blogPosts);
   });
 });
 

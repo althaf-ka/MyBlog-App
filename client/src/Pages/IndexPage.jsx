@@ -1,12 +1,10 @@
 import React from "react";
-import Post from "../Components/Post/Post";
+import HomePagePosts from "../Components/HomePagePosts/HomePagePosts";
 
 function IndexPage() {
   return (
     <>
-      <Post />
-      <Post />
-      <Post />
+      <HomePagePosts />
     </>
   );
 }
