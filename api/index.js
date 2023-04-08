@@ -1,4 +1,4 @@
-import express, { response } from "express";
+import express, { json, response } from "express";
 import cors from "cors";
 const app = express();
 import dbHelpers from "./blogHelpers/dbHelpers.js";
@@ -105,6 +105,19 @@ app.get("/post", (req, res) => {
   dbHelpers.getAllPost().then(blogPosts => {
     res.json(blogPosts);
   });
+});
+
+app.get("/post/:id", (req, res) => {
+  const postId = req.params.id;
+  dbHelpers
+    .getPostById(postId)
+    .then(blogPost => {
+      console.log(blogPost);
+      res.json(blogPost);
+    })
+    .catch(err => {
+      res.json({ message: "Error Fetching Blogs " });
+    });
 });
 
 app.listen(4000, () => {

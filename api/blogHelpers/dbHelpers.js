@@ -1,6 +1,7 @@
 import { db } from "../db/connection.js";
 import collection from "../db/collection.js";
 import bcrypt from "bcrypt";
+import { ObjectId } from "mongodb";
 
 export default {
   registerUser: (username, password) => {
@@ -81,6 +82,20 @@ export default {
         resolve(blogs);
       } catch (err) {
         console.log(err);
+      }
+    });
+  },
+
+  getPostById: postId => {
+    return new Promise(async (resolve, reject) => {
+      postId = new ObjectId(postId);
+      try {
+        const singleBlog = await db
+          .collection(collection.POSTS_COLLECTION)
+          .findOne({ _id: postId });
+        resolve(singleBlog);
+      } catch (err) {
+        reject(err);
       }
     });
   },

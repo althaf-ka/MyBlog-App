@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import "./HomePagePosts.css";
 import Post from "../Post/Post";
 import axios from "../../../config/axios";
 import { useState } from "react";
