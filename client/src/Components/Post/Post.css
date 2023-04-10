@@ -24,6 +24,10 @@ div.post a {
   color: inherit;
 }
 
+div.post a:hover {
+  color: #333;
+}
+
 div.post p.info {
   margin: 6px 0;
   color: #888;

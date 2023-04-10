@@ -2,6 +2,7 @@ import { db } from "../db/connection.js";
 import collection from "../db/collection.js";
 import bcrypt from "bcrypt";
 import { ObjectId } from "mongodb";
+import { response } from "express";
 
 export default {
   registerUser: (username, password) => {
@@ -97,6 +98,32 @@ export default {
       } catch (err) {
         reject(err);
       }
+    });
+  },
+
+  updatePost: (postId, title, summary, content, coverImageURL) => {
+    return new Promise((resolve, reject) => {
+      postId = new ObjectId(postId);
+      const now = new Date();
+      const updateFields = {
+        title: title,
+        summary: summary,
+        content: content,
+        updatedAt: now,
+      };
+      //checking for new cover image Present
+      if (coverImageURL) {
+        updateFields.coverImageURL = coverImageURL;
+      }
+      db.collection(collection.POSTS_COLLECTION)
+        .updateOne({ _id: postId }, { $set: updateFields })
+        .then(response => {
+          resolve("Sucessfully Updated the blog");
+        })
+        .catch(err => {
+          console.log(err, "Updation failed");
+          reject("Blog Updation Failed");
+        });
     });
   },
 };

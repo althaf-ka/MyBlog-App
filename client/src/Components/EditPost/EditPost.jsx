@@ -1,28 +1,43 @@
-import React, { useContext, useState } from "react";
-import "./CreatePost.css";
+import React, { useState, useEffect } from "react";
+import "./EditPost.css";
 import axios from "../../../config/axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import EditorQuill from "../EditorQuill/EditorQuill";
 
-function CreatePost() {
+function EditPost() {
+  const { id } = useParams();
   const [title, setTitle] = useState("");
   const [summary, setSummary] = useState("");
   const [content, setContent] = useState("");
   const [files, setFiles] = useState("");
-
+  const [imageURL, setImageURL] = useState("");
   const navigate = useNavigate();
 
-  const createNewPost = e => {
+  useEffect(() => {
+    axios.get(`/post/${id}`).then(postInfo => {
+      postInfo = postInfo.data;
+      setTitle(postInfo.title);
+      setSummary(postInfo.summary);
+      setContent(postInfo.content);
+      setImageURL(
+        `http://localhost:4000/uploads/postImages/${postInfo.coverImageURL}`
+      );
+    });
+  }, []);
+
+  const updatePost = e => {
     e.preventDefault();
     const data = new FormData();
     data.set("id", id);
     data.set("title", title);
     data.set("summary", summary);
     data.set("content", content);
-    data.set("file", files[0]);
+    if (files?.[0]) {
+      data.set("file", files?.[0]);
+    }
 
     axios
-      .post("/post", data, { withCredentials: true })
+      .put("/post", data, { withCredentials: true })
       .then(response => {
         console.log(response.data);
         navigate("/");
@@ -35,7 +50,7 @@ function CreatePost() {
   };
 
   return (
-    <form onSubmit={createNewPost} encType="multipart/form-data">
+    <form onSubmit={updatePost} encType="multipart/form-data">
       <input
         type="title"
         placeholder="Title"
@@ -50,16 +65,20 @@ function CreatePost() {
         value={summary}
         onChange={e => setSummary(e.target.value)}
       />
+      <div className="image-view">
+        <img src={imageURL} alt="Poster" />
+      </div>
       <input
         type="file"
         onChange={e => {
           setFiles(e.target.files);
+          setImageURL(URL.createObjectURL(e.target.files[0]));
         }}
       />
       <EditorQuill value={content} onChange={setContent} />
-      <button className="createbtn">Create Post</button>
+      <button className="createbtn">Update Post</button>
     </form>
   );
 }
 
-export default CreatePost;
+export default EditPost;
