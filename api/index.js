@@ -69,7 +69,6 @@ app.post("/login", (req, res) => {
 
 app.get("/profile", (req, res) => {
   const { token } = req.cookies;
-  console.log(10 + "10");
 
   jwt.verify(token, process.env.JWT_SECRET, (err, info) => {
     //Checking user token for login Verification
@@ -142,7 +141,7 @@ app.put("/post", postUpload.single("file"), (req, res) => {
         }
         //Updating the database
         dbHelpers
-          .updatePost(id, title, summary, content, coverImageURL)
+          .updatePost(id, title, content, coverImageURL)
           .then(response => {
             res.json(response);
           })

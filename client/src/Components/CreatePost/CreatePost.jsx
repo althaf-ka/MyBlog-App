@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import "./CreatePost.css";
 import axios from "../../../config/axios";
 import { useNavigate } from "react-router-dom";
@@ -6,7 +6,6 @@ import EditorQuill from "../EditorQuill/EditorQuill";
 
 function CreatePost() {
   const [title, setTitle] = useState("");
-  const [summary, setSummary] = useState("");
   const [content, setContent] = useState("");
   const [files, setFiles] = useState("");
 
@@ -15,9 +14,7 @@ function CreatePost() {
   const createNewPost = e => {
     e.preventDefault();
     const data = new FormData();
-    data.set("id", id);
     data.set("title", title);
-    data.set("summary", summary);
     data.set("content", content);
     data.set("file", files[0]);
 
@@ -43,12 +40,6 @@ function CreatePost() {
         onChange={e => {
           setTitle(e.target.value);
         }}
-      />
-      <input
-        type="summary"
-        placeholder="Summary"
-        value={summary}
-        onChange={e => setSummary(e.target.value)}
       />
       <input
         type="file"

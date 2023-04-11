@@ -48,7 +48,7 @@ export default {
   },
 
   addPost: (blog, coverImageURL, user) => {
-    const { title, summary, content } = blog;
+    const { title, content } = blog;
     const { _id, username } = user;
     return new Promise((resolve, reject) => {
       try {
@@ -57,15 +57,13 @@ export default {
           userId: _id,
           author: username,
           title: title,
-          summary: summary,
           content: content,
           coverImageURL: coverImageURL,
           createdAt: now,
-          updatedAt: now,
+          updatedAt: null,
         });
         resolve("Successfully Posted The blog");
       } catch (err) {
-        console.log(err);
         reject("Posting failed");
       }
     });
@@ -77,7 +75,7 @@ export default {
         const blogs = await db
           .collection(collection.POSTS_COLLECTION)
           .find()
-          .sort({ createdAt: -1 })
+          .sort({ createdAt: -1 }) //To get Latest Blogs
           .limit(25)
           .toArray();
         resolve(blogs);
@@ -101,13 +99,12 @@ export default {
     });
   },
 
-  updatePost: (postId, title, summary, content, coverImageURL) => {
+  updatePost: (postId, title, content, coverImageURL) => {
     return new Promise((resolve, reject) => {
       postId = new ObjectId(postId);
       const now = new Date();
       const updateFields = {
         title: title,
-        summary: summary,
         content: content,
         updatedAt: now,
       };

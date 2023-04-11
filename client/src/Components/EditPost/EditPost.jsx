@@ -7,7 +7,6 @@ import EditorQuill from "../EditorQuill/EditorQuill";
 function EditPost() {
   const { id } = useParams();
   const [title, setTitle] = useState("");
-  const [summary, setSummary] = useState("");
   const [content, setContent] = useState("");
   const [files, setFiles] = useState("");
   const [imageURL, setImageURL] = useState("");
@@ -17,7 +16,6 @@ function EditPost() {
     axios.get(`/post/${id}`).then(postInfo => {
       postInfo = postInfo.data;
       setTitle(postInfo.title);
-      setSummary(postInfo.summary);
       setContent(postInfo.content);
       setImageURL(
         `http://localhost:4000/uploads/postImages/${postInfo.coverImageURL}`
@@ -30,7 +28,6 @@ function EditPost() {
     const data = new FormData();
     data.set("id", id);
     data.set("title", title);
-    data.set("summary", summary);
     data.set("content", content);
     if (files?.[0]) {
       data.set("file", files?.[0]);
@@ -58,12 +55,6 @@ function EditPost() {
         onChange={e => {
           setTitle(e.target.value);
         }}
-      />
-      <input
-        type="summary"
-        placeholder="Summary"
-        value={summary}
-        onChange={e => setSummary(e.target.value)}
       />
       <div className="image-view">
         <img src={imageURL} alt="Poster" />

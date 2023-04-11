@@ -30,8 +30,31 @@ function Header() {
       <nav>
         {username && (
           <>
-            <Link to="/create">Create new Post</Link>
-            <Link onClick={logout}>Logout</Link>
+            <div className="tools">
+              <Link to="/create" className="new-post-link">
+                <i class="fa fa-file-text" aria-hidden="true"></i>New Post
+              </Link>
+            </div>
+            <div class="dropdown">
+              <button class="dropbtn">
+                {username}
+                <i class="fa fa-angle-double-down" aria-hidden="true"></i>
+              </button>
+              <div class="dropdown-content">
+                <a href="#">
+                  <i class="fa fa-user" aria-hidden="true"></i>
+                  Profile
+                </a>
+                <Link to="/create" className="new-post-link">
+                  <i class="fa fa-file-text" aria-hidden="true"></i>New Post
+                </Link>
+                <a href="#">Link 2</a>
+                <Link onClick={logout}>
+                  <i class="fa fa-sign-out" aria-hidden="true"></i>
+                  Logout
+                </Link>
+              </div>
+            </div>
           </>
         )}
         {!username && (
