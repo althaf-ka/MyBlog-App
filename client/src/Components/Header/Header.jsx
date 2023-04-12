@@ -7,15 +7,21 @@ import { UserContext } from "../../../Context/UserContext";
 function Header() {
   const { userInfo, setUserInfo } = useContext(UserContext);
   useEffect(() => {
-    axios.get("/profile", { withCredentials: true }).then(response => {
-      setUserInfo(response.data);
-    });
+    axios
+      .get("/profile", { withCredentials: true })
+      .then(response => {
+        setUserInfo(response.data);
+      })
+      .catch(err => {
+        console.log(err.message, "User Not Logged In");
+        setUserInfo(null);
+      });
   }, []);
 
   const logout = () => {
     axios.defaults.withCredentials = true;
     axios.post("/logout").then(response => {
-      console.log(response);
+      console.log(response.data.message);
       setUserInfo(null);
     });
   };
@@ -32,25 +38,25 @@ function Header() {
           <>
             <div className="tools">
               <Link to="/create" className="new-post-link">
-                <i class="fa fa-file-text" aria-hidden="true"></i>New Post
+                <i className="fa fa-file-text" aria-hidden="true"></i>New Post
               </Link>
             </div>
-            <div class="dropdown">
-              <button class="dropbtn">
+            <div className="dropdown">
+              <button className="dropbtn">
                 {username}
-                <i class="fa fa-angle-double-down" aria-hidden="true"></i>
+                <i className="fa fa-angle-double-down" aria-hidden="true"></i>
               </button>
-              <div class="dropdown-content">
+              <div className="dropdown-content">
                 <a href="#">
-                  <i class="fa fa-user" aria-hidden="true"></i>
+                  <i className="fa fa-user" aria-hidden="true"></i>
                   Profile
                 </a>
                 <Link to="/create" className="new-post-link">
-                  <i class="fa fa-file-text" aria-hidden="true"></i>New Post
+                  <i className="fa fa-file-text" aria-hidden="true"></i>New Post
                 </Link>
                 <a href="#">Link 2</a>
                 <Link onClick={logout}>
-                  <i class="fa fa-sign-out" aria-hidden="true"></i>
+                  <i className="fa fa-sign-out" aria-hidden="true"></i>
                   Logout
                 </Link>
               </div>

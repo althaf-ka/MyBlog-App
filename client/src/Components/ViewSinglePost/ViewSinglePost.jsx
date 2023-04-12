@@ -34,7 +34,7 @@ function ViewSinglePost() {
           className="content"
           dangerouslySetInnerHTML={{ __html: postInfo.content }}
         ></div>
-        {userInfo._id === postInfo.userId && (
+        {userInfo && userInfo._id === postInfo.userId && (
           <div className="edit-row">
             <Link className="edit-btn" to={`/edit/${postInfo._id}`}>
               <svg
