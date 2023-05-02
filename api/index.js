@@ -10,7 +10,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 dotenv.config();
-import { connect as MongoConnect } from "./db/connection.js";
+import { connect as MongoConnect, db } from "./db/connection.js";
 import { postUpload } from "./blogHelpers/MulterUpload.js";
 import { ObjectId } from "mongodb";
 
@@ -98,16 +98,24 @@ app.post("/post", postUpload.single("file"), (req, res) => {
       throw err;
     } else {
       //Saving blog Post to database
-      dbHelpers.addPost(blog, coverImageURL, user).then(response => {
-        res.json(response);
-      });
+      dbHelpers
+        .addPost(blog, coverImageURL, user)
+        .then(response => {
+          res.json(response);
+          console.log(response, "response");
+        })
+        .catch(err => {
+          console.log(err);
+          res.status(500).json({ message: "Internal Server Error" });
+        });
     }
   });
 });
 
 app.put("/post", postUpload.single("file"), (req, res) => {
   // Extract data from request body and cookie
-  const { id, title, summary, content } = req.body;
+  const { id } = req.body;
+  const blogDetails = req.body;
   const coverImageURL = req.file ? req.file.filename : null;
   const { token } = req.cookies;
 
@@ -139,17 +147,17 @@ app.put("/post", postUpload.single("file"), (req, res) => {
               });
             }
           } catch (err) {
-            res.json("Image Updation Failed try Again");
+            res.status(500).json("Image Updation Failed try Again");
           }
         }
         //Updating the database
         dbHelpers
-          .updatePost(id, title, content, coverImageURL)
+          .updatePost(id, blogDetails, coverImageURL)
           .then(response => {
-            res.json(response);
+            res.status(200).json({ message: response });
           })
           .catch(err => {
-            res.json(err);
+            res.status(500).json({ message: err });
           });
       }
     }
@@ -171,6 +179,23 @@ app.get("/post/:id", (req, res) => {
     })
     .catch(err => {
       res.json({ message: "Error Fetching Blogs " });
+    });
+});
+
+app.get("/topic-suggestions", (req, res) => {
+  dbHelpers.AlltopicSuggestion().then(response => {
+    res.json(response);
+  });
+});
+
+app.get("/topics/:topicName", (req, res) => {
+  dbHelpers
+    .TopicWiseAllBlogs(req.params.topicName)
+    .then(response => {
+      res.status(200).json(response);
+    })
+    .catch(err => {
+      res.status(err.status).json(err.message);
     });
 });
 

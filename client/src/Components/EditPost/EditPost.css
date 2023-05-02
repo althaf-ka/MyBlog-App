@@ -1,3 +1,16 @@
 div.image-view {
   width: 30%;
 }
+
+div.image-view img {
+  width: 100%;
+  min-height: 6rem;
+  height: auto;
+  object-fit: cover;
+}
+
+@media (max-width: 520px) {
+  div.image-view img {
+    width: 180%;
+  }
+}

@@ -51,10 +51,12 @@ function Header() {
                   <i className="fa fa-user" aria-hidden="true"></i>
                   Profile
                 </a>
+                <Link to="/explore-topics">
+                  <i class="fa fa-hashtag" aria-hidden="true"></i>Topics
+                </Link>
                 <Link to="/create" className="new-post-link">
                   <i className="fa fa-file-text" aria-hidden="true"></i>New Post
                 </Link>
-                <a href="#">Link 2</a>
                 <Link onClick={logout}>
                   <i className="fa fa-sign-out" aria-hidden="true"></i>
                   Logout

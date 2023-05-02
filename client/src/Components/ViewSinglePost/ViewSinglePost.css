@@ -10,7 +10,7 @@ div.post-page div.image img {
   width: 100%;
 }
 
-div.post-page a {
+.edit-btn div.post-page a {
   color: #333;
   text-decoration: underline;
 }
@@ -56,4 +56,26 @@ div.post-page a.edit-btn {
 
 a svg {
   height: 20px;
+}
+
+.topics-btn-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 2rem 0;
+}
+
+.topic-pill-btn-singlepost {
+  display: inline-block;
+  text-decoration: none;
+  padding: 5px 10px;
+  border-radius: 20px;
+  background-color: #333;
+  font-size: 14px;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.topic-pill-btn-singlepost:hover {
+  background-color: green;
 }

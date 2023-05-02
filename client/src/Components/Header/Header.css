@@ -98,7 +98,7 @@ header nav {
   display: none;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 520px) {
   .new-post-link {
     display: none;
   }

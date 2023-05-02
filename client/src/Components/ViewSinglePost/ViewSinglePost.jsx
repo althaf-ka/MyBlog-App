@@ -34,6 +34,20 @@ function ViewSinglePost() {
           className="content"
           dangerouslySetInnerHTML={{ __html: postInfo.content }}
         ></div>
+        <div className="topics-btn-container">
+          {postInfo.topics.map((topic, index) => {
+            const topicQuery = topic.replace(/\s+/g, "-").toLowerCase();
+            return (
+              <Link
+                to={`/topics/${topicQuery}`}
+                key={index}
+                className="topic-pill-btn-singlepost"
+              >
+                {topic}
+              </Link>
+            );
+          })}
+        </div>
         {userInfo && userInfo._id === postInfo.userId && (
           <div className="edit-row">
             <Link className="edit-btn" to={`/edit/${postInfo._id}`}>
