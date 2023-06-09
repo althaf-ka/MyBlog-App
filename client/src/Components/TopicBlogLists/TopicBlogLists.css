@@ -1,27 +1,3 @@
-.topic-details-header {
-  display: flex;
-  justify-content: space-between;
-  margin: 0 2%;
-  margin-top: -20px;
-}
-
-.topic-title {
-  text-align: center;
-  padding-top: 0.9rem;
-}
-
-.stories-span {
-  display: flex;
-}
-
-.topic-total {
-  text-align: center;
-}
-
-.post-list {
-  margin: 0 2%;
-}
-
 .post-card {
   display: flex;
   background-color: #fff;
@@ -95,20 +71,19 @@
 }
 
 @media (max-width: 600px) {
-  .topic-title {
-    text-align: left;
-    padding-right: 3%;
-    padding-top: 0;
+  .post-description {
+    display: none;
   }
-  .topic-total {
-    display: flex;
-    font-weight: 600;
-    text-align: left;
-    margin-left: 7%;
+  .post-content h3 {
+    min-height: 3rem;
+    font-size: 0.9rem;
+    word-wrap: break-word;
   }
-  .stories-span {
-    display: inline-block;
-    padding-left: 3%;
-    font-weight: 400;
+  .post-image {
+    max-width: 29%;
+    object-fit: cover;
+  }
+  .post-meta {
+    font-size: 0.7rem;
   }
 }

@@ -1,39 +1,47 @@
 import React from "react";
 import "./Post.css";
 import { format } from "date-fns";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
-function Post({ _id, author, title, content, coverImageURL, createdAt }) {
+function Post({ _id, author, title, content, coverImageURL, createdAt, userId }) {
   //Convert html file into String from QuillEditor
   const parser = new DOMParser();
   const doc = parser.parseFromString(content, "text/html");
   const plainTextContent = doc.body.textContent;
+  const navigate = useNavigate();
+
+  const handleDivClick = () => {
+    navigate(`/post/${_id}`);
+  };
+  const handleAuthorClick = e => {
+    e.stopPropagation();
+  };
+
   return (
     <>
-      <div className="post">
+      <div className="post" onClick={handleDivClick}>
         <div className="image">
-          <Link to={`/post/${_id}`}>
-            <img
-              src={`http://localhost:4000/uploads/postImages/${coverImageURL}`}
-              alt="PosterImg"
-            />
-          </Link>{" "}
+          <img
+            src={`http://localhost:4000/uploads/postImages/${coverImageURL}`}
+            alt="PosterImg"
+          />
         </div>
         <div className="text">
-          <Link to={`/post/${_id}`}>
-            <h2>{title.substring(0, 110)}</h2>
-          </Link>
+          <h2>{title?.substring(0, 110)}</h2>
           <p className="info">
-            <a href="" className="author">
+            <Link
+              to={`/profile/${userId}`}
+              className="author"
+              onClick={handleAuthorClick}
+            >
               {author}
-            </a>
+            </Link>
             <time>{format(new Date(createdAt), "MMM d, yyyy HH:mm")}</time>
           </p>
-          <Link to={`/post/${_id}`}>
-            <p className="summary">
-              {plainTextContent.substring(0, 250) + " ..."}
-            </p>
-          </Link>
+
+          <p className="summary">
+            {plainTextContent.substring(0, 250) + " ..."}
+          </p>
         </div>
       </div>
     </>

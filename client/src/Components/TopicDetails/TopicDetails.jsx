@@ -1,28 +1,55 @@
 import React, { useEffect, useState } from "react";
 import "./TopicDetails.css";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import axios from "../../../config/axios";
-import { format } from "date-fns";
+import InfiniteScroll from "react-infinite-scroll-component";
+import TailSpinLoader from "../TailSpinLoader/TailSpinLoader";
+import TopicBlogLists from "../TopicBlogLists/TopicBlogLists";
+import EndMessage from "../EndMessage/EndMessage";
+import ScrollToTopButton from "../ScrollToTopButton/ScrollToTopButton";
 
 function TopicDetails() {
-  const { topicName } = useParams();
-  const parser = new DOMParser();
+  const { topicId } = useParams();
   const [header, setHeader] = useState(null);
   const [postDetails, setPostDetails] = useState([]);
+  const [hasMore, setHasMore] = useState(true);
+  let mounted = false;
 
   useEffect(() => {
     const fetchTopicDetails = async () => {
       try {
-        const response = await axios.get(`/topics/${topicName}`);
-        const { _id: title, total } = response.data;
+        const topicHeader = await axios.get(`/topic/details/${topicId}`);
+        const { title, total } = topicHeader.data;
         setHeader({ title, total });
-        setPostDetails(response.data.postsDetails);
       } catch (err) {
         console.log(err);
       }
     };
-    fetchTopicDetails();
+    if (!mounted) {
+      fetchTopicDetails();
+      loadMore();
+      mounted = true;
+    }
   }, []);
+
+  const loadMore = async () => {
+    try {
+      const topicBlogs = await axios.get(
+        `/topic/${topicId}/?skip=${postDetails?.length}`
+      );
+      if (topicBlogs.data.length === 0) {
+        setHasMore(false);
+      } else {
+        setPostDetails(prevPostDetails => [
+          ...prevPostDetails,
+          ...topicBlogs.data,
+        ]);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <>
       <div className="topic-details-header">
@@ -37,36 +64,20 @@ function TopicDetails() {
       </div>
 
       <div className="post-list">
-        {postDetails.map(post => {
-          const content = parser.parseFromString(post.content, "text/html");
-          return (
-            <div key={post._id} className="post-card">
-              <div className="post-content">
-                <Link to={`/post/${post._id}`}>
-                  <h3>{post.title}</h3>
-                  <p className="post-description">
-                    {content.documentElement.textContent.substring(0, 200) +
-                      "....."}
-                  </p>
-                  <div className="post-meta">
-                    <div className="author">{post.author}</div>
-                    <time className="date">
-                      {format(new Date(post.createdAt), "MMM d, yyyy HH:mm")}
-                    </time>
-                  </div>
-                </Link>
-              </div>
-              <div className="post-image">
-                <Link to={`/post/${post._id}`}>
-                  <img
-                    src={`http://localhost:4000/uploads/postImages/${post.coverImageURL}`}
-                    alt="Post Image"
-                  />
-                </Link>
-              </div>
-            </div>
-          );
-        })}
+        <InfiniteScroll
+          dataLength={postDetails.length}
+          next={loadMore}
+          hasMore={hasMore}
+          loader={<TailSpinLoader />}
+          scrollThreshold={0.8}
+          style={{ overflow: "none" }}
+          endMessage={<EndMessage info={true} />}
+        >
+          {postDetails?.map((post, index) => (
+            <TopicBlogLists key={index} {...post} />
+          ))}
+        </InfiniteScroll>
+        <ScrollToTopButton />
       </div>
     </>
   );

@@ -29,7 +29,7 @@ function Register() {
   return (
     <form className="register" onSubmit={register}>
       <h1>Register</h1>
-      {errMessage && <p className="error">{errMessage}</p>}
+      {errMessage && <p className="error-register">{errMessage}</p>}
       <input
         type="text"
         placeholder="username"

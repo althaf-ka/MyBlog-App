@@ -1,0 +1,25 @@
+.end-message-container {
+  text-align: center;
+}
+
+.end-message-header {
+  font-size: 23px;
+  font-weight: bold;
+  margin-bottom: 18px;
+}
+
+.end-message-text {
+  font-size: 18px;
+  line-height: 1.5;
+  color: #666;
+}
+
+@media (max-width: 520px) {
+  .end-message-header {
+    font-size: 19px;
+  }
+  .end-message-text {
+    font-size: 15px;
+    line-height: 1.3;
+  }
+}

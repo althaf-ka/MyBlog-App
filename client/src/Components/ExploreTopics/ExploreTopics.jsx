@@ -13,8 +13,8 @@ function Topics() {
     const fetchSuggestions = async () => {
       try {
         const response = await axios.get("/topic-suggestions");
-        const suggestionTitles = response.data.map((suggestion, index) => ({
-          id: index,
+        const suggestionTitles = response.data.map(suggestion => ({
+          id: suggestion._id,
           name: suggestion.title,
         }));
         setSuggestions(suggestionTitles);
@@ -31,7 +31,7 @@ function Topics() {
 
   const handleOnSelect = topic => {
     const topicQuery = topic.name.replace(/\s+/g, "-").toLowerCase();
-    navigate(`/topics/${topicQuery}`);
+    navigate(`/topics/${topicQuery}/${topic.id}`);
   };
 
   const sortedSuggestions = suggestions.sort((a, b) =>
@@ -57,11 +57,12 @@ function Topics() {
       </div>
 
       <div className="explore-topics-btn-container">
+        {console.log(suggestions)}
         {suggestions.slice(0, 30).map((topic, index) => {
           const topicQuery = topic.name.replace(/\s+/g, "-").toLowerCase();
           return (
             <Link
-              to={`/topics/${topicQuery}`}
+              to={`/topics/${topicQuery}/${topic.id}`}
               key={index}
               className="topic-pill-btn"
             >

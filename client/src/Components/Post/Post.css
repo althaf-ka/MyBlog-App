@@ -10,6 +10,7 @@ div.post {
   gap: 20px;
   margin-bottom: 30px;
   transition: all 0.2s ease-in-out;
+  cursor: pointer;
 }
 @media screen and (min-width: 700px) {
   div.post {

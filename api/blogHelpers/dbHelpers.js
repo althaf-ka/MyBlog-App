@@ -2,7 +2,6 @@ import { db } from "../db/connection.js";
 import collection from "../db/collection.js";
 import bcrypt from "bcrypt";
 import { ObjectId } from "mongodb";
-import { response } from "express";
 
 export default {
   registerUser: (username, password) => {
@@ -49,15 +48,14 @@ export default {
 
   addPost: (blog, coverImageURL, user) => {
     const { title, content, topics } = blog;
-    const { _id, username } = user;
+    const { _id } = user;
     return new Promise(async (resolve, reject) => {
       try {
         const now = new Date();
         const newPost = await db
           .collection(collection.POSTS_COLLECTION)
           .insertOne({
-            userId: _id,
-            author: username,
+            userId: new ObjectId(_id),
             title: title,
             content: content,
             coverImageURL: coverImageURL,
@@ -89,14 +87,44 @@ export default {
     });
   },
 
-  getAllPost: () => {
+  getAllPost: skip => {
     return new Promise(async (resolve, reject) => {
       try {
         const blogs = await db
           .collection(collection.POSTS_COLLECTION)
-          .find()
-          .sort({ createdAt: -1 }) //To get Latest Blogs
-          .limit(25)
+          .aggregate([
+            {
+              $lookup: {
+                from: collection.USERS_COLLECTION,
+                localField: "userId",
+                foreignField: "_id",
+                as: "author",
+              },
+            },
+            {
+              $unwind: "$author",
+            },
+            {
+              $sort: { createdAt: -1 },
+            },
+            {
+              $skip: parseInt(skip) || 0,
+            },
+            {
+              $limit: 15,
+            },
+            {
+              $project: {
+                _id: 1,
+                title: 1,
+                content: 1,
+                createdAt: 1,
+                coverImageURL: 1,
+                userId: 1,
+                author: "$author.name", // Assuming the author's name field is 'name'
+              },
+            },
+          ])
           .toArray();
         resolve(blogs);
       } catch (err) {
@@ -106,13 +134,73 @@ export default {
   },
 
   getPostById: postId => {
+    //topic lookup to get topic id
     return new Promise(async (resolve, reject) => {
       postId = new ObjectId(postId);
       try {
         const singleBlog = await db
           .collection(collection.POSTS_COLLECTION)
-          .findOne({ _id: postId });
-        resolve(singleBlog);
+          .aggregate([
+            { $match: { _id: postId } },
+            {
+              $lookup: {
+                from: collection.USERS_COLLECTION,
+                localField: "userId",
+                foreignField: "_id",
+                as: "author",
+              },
+            },
+            { $unwind: "$author" },
+            {
+              $lookup: {
+                from: collection.TOPICS_COLLECTION,
+                localField: "topics",
+                foreignField: "title",
+                as: "topicDetails",
+              },
+            },
+            {
+              $project: {
+                userId: 1,
+                author: "$author.name",
+                title: 1,
+                content: 1,
+                coverImageURL: 1,
+                createdAt: 1,
+                updatedAt: 1,
+                profileImageURL: "$author.profileImageURL",
+                topics: {
+                  $map: {
+                    input: "$topicDetails",
+                    as: "topic",
+                    in: { _id: "$$topic._id", title: "$$topic.title" },
+                  },
+                },
+              },
+            },
+          ])
+          .toArray();
+        resolve(singleBlog[0]);
+      } catch (err) {
+        reject(err);
+      }
+    });
+  },
+
+  postsByAuthor: (userId, skip) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const allPostsofAuthor = await db
+          .collection(collection.POSTS_COLLECTION)
+          .find(
+            { userId: new ObjectId(userId) },
+            { projection: { _id: 1, title: 1, coverImageURL: 1, createdAt: 1 } }
+          )
+          .sort({ createdAt: -1 })
+          .skip(parseInt(skip) || 0)
+          .limit(15)
+          .toArray();
+        resolve(allPostsofAuthor);
       } catch (err) {
         reject(err);
       }
@@ -201,26 +289,59 @@ export default {
     });
   },
 
+  deletePostById: postId => {
+    return new Promise((resolve, reject) => {
+      db.collection(collection.POSTS_COLLECTION)
+        .deleteOne({ _id: new ObjectId(postId) })
+        .then(response => {
+          if (response.deletedCount === 0) {
+            throw { status: 404, message: "Failed to Delete the post" };
+          }
+          resolve({
+            status: 200,
+            message: "Post has been deleted Sucessfully",
+          });
+        })
+        .catch(err => {
+          reject({
+            status: err.status || 404,
+            message: err.message || "Something Happened",
+          });
+        });
+    });
+  },
+
   AlltopicSuggestion: () => {
     return new Promise(async (resolve, reject) => {
       const topicSuggestions = await db
         .collection(collection.TOPICS_COLLECTION)
-        .find({}, { projection: { title: 1, _id: 0 } })
+        .find({}, { projection: { title: 1, _id: 1 } })
         .sort({ total: -1 })
         .toArray();
+      console.log(topicSuggestions);
       resolve(topicSuggestions);
     });
   },
 
-  TopicWiseAllBlogs: topicName => {
-    topicName = topicName.toLowerCase().replace(/-/g, " ");
+  TotalBlogsInTopic: topicId => {
+    return new Promise(async (resolve, reject) => {
+      const TotalTopicBlogs = await db
+        .collection(collection.TOPICS_COLLECTION)
+        .findOne(
+          { _id: new ObjectId(topicId) },
+          { projection: { _id: 0, posts: 0 } }
+        );
+      resolve(TotalTopicBlogs);
+    });
+  },
 
+  TopicWiseAllBlogs: (topicId, skip) => {
     return new Promise(async (resolve, reject) => {
       try {
         const allBlogs = await db
           .collection(collection.TOPICS_COLLECTION)
           .aggregate([
-            { $match: { title: { $regex: new RegExp(topicName, "i") } } },
+            { $match: { _id: new ObjectId(topicId) } },
             {
               $lookup: {
                 from: collection.POSTS_COLLECTION,
@@ -231,10 +352,22 @@ export default {
             },
             { $unwind: "$postsDetails" },
             {
+              $lookup: {
+                from: collection.USERS_COLLECTION,
+                localField: "postsDetails.userId",
+                foreignField: "_id",
+                as: "author",
+              },
+            },
+            { $unwind: "$author" },
+            {
+              $addFields: {
+                "postsDetails.author": "$author.name",
+              },
+            },
+            {
               $project: {
                 _id: 0,
-                title: 1,
-                total: 1,
                 "postsDetails._id": 1,
                 "postsDetails.userId": 1,
                 "postsDetails.author": 1,
@@ -246,27 +379,220 @@ export default {
                 "postsDetails.createdAt": 1,
               },
             },
+            { $sort: { "postsDetails.createdAt": -1 } },
+            { $skip: parseInt(skip) || 0 },
+            { $limit: 15 },
             {
-              $group: {
-                _id: "$title",
-                total: { $first: "$total" },
-                postsDetails: { $push: "$postsDetails" },
+              $replaceRoot: {
+                newRoot: "$postsDetails",
               },
             },
-            // { $limit: limit },
           ])
           .toArray();
 
-        if (allBlogs.length === 0) {
+        if (allBlogs.length === 0 && skip === 0) {
           throw {
             status: 404,
             message: `No blogs found for topic: ${topicName}`,
           };
         } else {
-          resolve(allBlogs[0]);
+          resolve(allBlogs);
         }
       } catch (error) {
         reject(error);
+      }
+    });
+  },
+
+  getAuthorDetails: userId => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const author = await db
+          .collection(collection.USERS_COLLECTION)
+          .findOne(
+            { _id: new ObjectId(userId) },
+            { projection: { password: false } }
+          );
+        if (author === null) {
+          throw { status: 404, message: "Failed to retrieve user" };
+        }
+
+        const totalBlogs = await db
+          .collection(collection.POSTS_COLLECTION)
+          .countDocuments({ userId: new ObjectId(userId) });
+
+        resolve({ ...author, totalBlogs });
+      } catch (err) {
+        reject(err);
+      }
+    });
+  },
+
+  addAuthorDetails: (profileDetails, profileImageURL) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const { name, username, bio, socialLinks, id } = profileDetails;
+
+        // Check if the username already exists for a different user($ne:)=>To exculde currrent Username
+        const existingUsername = await db
+          .collection(collection.USERS_COLLECTION)
+          .findOne({ username, _id: { $ne: new ObjectId(id) } });
+        console.log(existingUsername, "existinguse");
+        if (existingUsername) {
+          throw {
+            status: 409,
+            message:
+              "Username already exists. Please choose a different username.",
+          };
+        }
+
+        const updatefield = {
+          name: name,
+          username: username,
+          bio: bio,
+          socialLinks: JSON.parse(socialLinks),
+        };
+        if (profileImageURL) {
+          updatefield.profileImageURL = profileImageURL;
+        }
+
+        const updateProfileResult = await db
+          .collection(collection.USERS_COLLECTION)
+          .updateOne({ _id: new ObjectId(id) }, { $set: updatefield });
+
+        if (updateProfileResult.modifiedCount === 0) {
+          throw {
+            status: 500,
+            message: "Profile updation failed. Please try again later.",
+          };
+        }
+        resolve({ status: 200, message: "Profile updated Sucessfully." });
+      } catch (err) {
+        reject(err);
+      }
+    });
+  },
+
+  addApplauseDetails: (
+    { currentUserId, newlyAddedClaps, authorId },
+    postId
+  ) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let response = await db
+          .collection(collection.APPLAUSE_COLLECTION)
+          .updateOne(
+            {
+              postId: new ObjectId(postId),
+              "applausedUsers.userId": currentUserId,
+            },
+            { $set: { "applausedUsers.$.claps": newlyAddedClaps } }
+          );
+
+        if (response?.matchedCount === 0) {
+          response = await db
+            .collection(collection.APPLAUSE_COLLECTION)
+            .updateOne(
+              { postId: new ObjectId(postId) },
+              {
+                $set: {
+                  postId: new ObjectId(postId),
+                  authorId: new ObjectId(authorId),
+                },
+                $addToSet: {
+                  applausedUsers: {
+                    userId: currentUserId,
+                    claps: newlyAddedClaps,
+                  },
+                },
+              },
+              { upsert: true }
+            );
+        }
+
+        resolve({ status: 200, message: "Applaused Sucessfully" });
+      } catch (error) {
+        console.log(error);
+        reject({
+          status: error.status || 500,
+          message: "Applaused Failed",
+        });
+      }
+    });
+  },
+
+  retrieveApplauseAndUserCounts: ({ postId, userId }) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const applausedData = await db
+          .collection(collection.APPLAUSE_COLLECTION)
+          .aggregate([
+            {
+              $match: { postId: new ObjectId(postId) },
+            },
+            {
+              $project: {
+                totalClaps: { $sum: "$applausedUsers.claps" },
+                filteredApplausedUsers: {
+                  $filter: {
+                    input: "$applausedUsers",
+                    cond: { $eq: ["$$this.userId", userId] }, //Create a array of object
+                  },
+                },
+              },
+            },
+            {
+              $project: {
+                totalClaps: 1,
+                currentUserClaps: {
+                  $ifNull: [
+                    { $arrayElemAt: ["$filteredApplausedUsers.claps", 0] },
+                    0,
+                  ],
+                },
+              },
+            },
+          ])
+          .toArray();
+
+        if (applausedData.length === 0) {
+          resolve({ status: 404, message: "No Previous Applause Found" });
+        }
+        resolve(applausedData[0]);
+      } catch (err) {
+        console.log(err);
+        reject({
+          status: err.status || 500,
+          message: "Error in Retriving Previous Claps",
+        });
+      }
+    });
+  },
+
+  deleteApplause: ({ postId, currentUserId }) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const deleteDetails = await db
+          .collection(collection.APPLAUSE_COLLECTION)
+          .updateOne(
+            { postId: new ObjectId(postId) },
+            {
+              $pull: {
+                applausedUsers: { userId: currentUserId },
+              },
+            }
+          );
+
+        if (deleteDetails.modifiedCount === 1) {
+          resolve({ status: 200, message: "Sucessfully Removed Claps" });
+        } else {
+          reject({ status: 400, message: "Failed Removing Claps" });
+        }
+      } catch (err) {
+        reject({
+          status: 400,
+          message: "Failed Removing Claps" || err.message,
+        });
       }
     });
   },

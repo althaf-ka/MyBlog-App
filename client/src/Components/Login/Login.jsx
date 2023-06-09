@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import "./Login.css";
 import { useNavigate } from "react-router-dom";
 import axios from "../../../config/axios";
@@ -8,9 +8,15 @@ function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errMessage, setErrMessage] = useState("");
-  const { setUserInfo } = useContext(UserContext);
+  const { userInfo, setUserInfo } = useContext(UserContext);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (userInfo) {
+      navigate("/");
+    }
+  }, [userInfo]);
 
   const login = async event => {
     event.preventDefault();
@@ -19,9 +25,8 @@ function Login() {
       const response = await axios.post("/login", { username, password });
       //checking if there user and also sending jwt token to store in cookie
       if (response.data.username) {
-        console.log(response);
-        const { _id, username } = response.data;
-        setUserInfo({ _id, username });
+        const { _id, username, name } = response.data;
+        setUserInfo({ _id, username, name });
         navigate("/");
       } else {
         //Setting user or password unmatched errors
@@ -36,7 +41,7 @@ function Login() {
   return (
     <form className="login" onSubmit={login}>
       <h1>Login</h1>
-      {errMessage && <p className="error">{errMessage}</p>}
+      {errMessage && <p className="error-login">{errMessage}</p>}
       <input
         type="text"
         placeholder="username"

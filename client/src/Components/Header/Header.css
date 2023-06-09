@@ -75,8 +75,13 @@ header nav {
 .dropdown:hover .dropdown-content {
   display: block;
 }
-
 .dropdown:hover .dropbtn {
+  background-color: #3e8e41;
+}
+.show-dropdown {
+  display: block;
+}
+.add-bg {
   background-color: #3e8e41;
 }
 
@@ -105,4 +110,16 @@ header nav {
   .dropdown-content a.new-post-link {
     display: block;
   }
+}
+
+.new-post-link {
+  display: inline-block;
+  color: #222;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.new-post-link:hover {
+  color: #449a4a;
 }

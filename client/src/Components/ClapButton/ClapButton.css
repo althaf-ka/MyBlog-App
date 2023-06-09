@@ -1,0 +1,95 @@
+/* .clap-container {
+  display: flex;
+  align-items: center;
+  max-width: 60%;
+  margin: 2px auto;
+  justify-content: space-between;
+} */
+
+.clap-icon {
+  display: flex;
+  align-items: center;
+}
+.display-clap-count {
+  margin-left: 2px;
+}
+
+.clap-btn,
+.three-dot-btn {
+  all: unset;
+  cursor: pointer;
+}
+
+.more-action-btn {
+  margin-left: auto;
+}
+
+.clap-btn:hover {
+  background-color: transparent;
+}
+.not-clicked:hover {
+  background-color: transparent;
+  stroke: #449a4a;
+}
+
+.fa-ellipsis-h {
+  /* To remove already given padding */
+  padding-right: 0;
+  border: none;
+  font-size: 1.6rem;
+}
+.three-dot-btn:hover {
+  background-color: transparent;
+  color: rgb(8, 8, 8);
+}
+
+.clap-icon {
+  background-color: transparent;
+  position: relative;
+}
+
+.clap-btn[animation="1"] {
+  animation: pop 0.1s;
+  fill: green;
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.bubble-count-shower {
+  position: absolute;
+  top: -28px;
+  left: 30%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 35px;
+  height: 35px;
+  background-color: grey;
+  border-radius: 50%;
+  font-weight: bold;
+  font-size: 15px;
+  transition: top 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+.bubble-count-shower[animation="1"] {
+  animation: transition 0.2s ease-in-out forwards;
+}
+@keyframes transition {
+  0% {
+    top: 0;
+  }
+  100% {
+    top: -28px;
+  }
+}

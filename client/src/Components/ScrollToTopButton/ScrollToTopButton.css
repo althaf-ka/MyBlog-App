@@ -1,0 +1,30 @@
+.scroll-to-top-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #222;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.scroll-to-top-button.visible {
+  opacity: 1;
+}
+
+.scroll-to-top-button .arrow {
+  color: #fff;
+  font-size: 18px;
+  transition: transform 0.3s;
+  padding-right: 0;
+}
+
+.scroll-to-top-button:hover .arrow {
+  transform: translateY(2px);
+}

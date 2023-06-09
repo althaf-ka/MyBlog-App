@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
 import "./Header.css";
 import { Link } from "react-router-dom";
 import axios from "../../../config/axios";
@@ -6,6 +6,7 @@ import { UserContext } from "../../../Context/UserContext";
 
 function Header() {
   const { userInfo, setUserInfo } = useContext(UserContext);
+
   useEffect(() => {
     axios
       .get("/profile", { withCredentials: true })
@@ -23,6 +24,7 @@ function Header() {
     axios.post("/logout").then(response => {
       console.log(response.data.message);
       setUserInfo(null);
+      window.location.reload();
     });
   };
 
@@ -43,16 +45,16 @@ function Header() {
             </div>
             <div className="dropdown">
               <button className="dropbtn">
-                {username}
+                {userInfo?.name}
                 <i className="fa fa-angle-double-down" aria-hidden="true"></i>
               </button>
               <div className="dropdown-content">
-                <a href="#">
+                <Link to={`/profile/${userInfo?._id}`}>
                   <i className="fa fa-user" aria-hidden="true"></i>
                   Profile
-                </a>
+                </Link>
                 <Link to="/explore-topics">
-                  <i class="fa fa-hashtag" aria-hidden="true"></i>Topics
+                  <i className="fa fa-hashtag" aria-hidden="true"></i>Topics
                 </Link>
                 <Link to="/create" className="new-post-link">
                   <i className="fa fa-file-text" aria-hidden="true"></i>New Post

@@ -43,7 +43,7 @@ function EditPost() {
         ...prevState,
         title: postInfo.title,
         content: postInfo.content,
-        topics: postInfo.topics,
+        topics: postInfo.topics?.map(topic => topic.title),
         prevTopics: postInfo.topics,
         imageURL: `http://localhost:4000/uploads/postImages/${postInfo.coverImageURL}`,
       }));
