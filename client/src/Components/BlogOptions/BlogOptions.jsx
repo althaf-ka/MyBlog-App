@@ -25,6 +25,11 @@ function BlogOptions({ onCancelClaps, isUserClapped }) {
     }
   };
 
+  const handleCancelClaps = () => {
+    onCancelClaps();
+    setMenuVisible(false);
+  };
+
   const copyToClipboard = async () => {
     try {
       await navigator.clipboard.writeText(window.location.href);
@@ -49,13 +54,13 @@ function BlogOptions({ onCancelClaps, isUserClapped }) {
       {menuVisible && (
         <div className="blog-options-dropdown-menu">
           {isUserClapped && (
-            <span onClick={onCancelClaps}>
+            <span onClick={handleCancelClaps}>
               <i className="fa fa-undo" aria-hidden="true"></i>
               Cancel Previous Applause
             </span>
           )}
           <span onClick={copyToClipboard}>
-            <i class="fa fa-clipboard" aria-hidden="true"></i>
+            <i className="fa fa-clipboard" aria-hidden="true"></i>
             Copy Link To Clipboard
           </span>
         </div>

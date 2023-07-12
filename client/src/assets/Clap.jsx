@@ -1,5 +1,3 @@
-import React from "react";
-
 function Clap({ isClicked }) {
   if (isClicked) {
     return (

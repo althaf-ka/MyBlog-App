@@ -1,24 +1,25 @@
 import { TailSpin } from "react-loader-spinner";
 
-function TailSpinLoader() {
+function TailSpinLoader({ size, wrapperClass }) {
+  const defaultStyles = {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingTop: "7%",
+  };
+
+  const wrapperStyles = wrapperClass ? {} : defaultStyles;
+
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        marginTop: "5%",
-      }}
-    >
+    <div style={wrapperStyles}>
       <TailSpin
-        height="60"
-        width="60"
+        height={size}
+        width={size}
         color="#4fa94d"
         ariaLabel="tail-spin-loading"
         radius="1"
-        wrapperStyle={{}}
-        wrapperClass=""
         visible={true}
+        wrapperClass={wrapperClass}
       />
     </div>
   );

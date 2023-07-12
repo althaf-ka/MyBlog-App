@@ -3,7 +3,7 @@ form .register {
   margin: 0 auto;
 }
 
-input {
+.register input {
   display: block;
   margin-bottom: 5px;
   width: 100%;
@@ -13,7 +13,7 @@ input {
   background-color: #fff;
 }
 
-button {
+.register button {
   cursor: pointer;
   width: 100%;
   display: block;
@@ -25,7 +25,7 @@ button {
   transition: all 0.3s ease-in-out;
 }
 
-button:hover {
+.register button:hover {
   background-color: #2c3e50;
 }
 

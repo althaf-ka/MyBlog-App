@@ -89,7 +89,7 @@ function Topics() {
                   <Link
                     to={`/topics/${topic.name
                       .replace(/\s+/g, "-")
-                      .toLowerCase()}`}
+                      .toLowerCase()}/${topic.id}`}
                     key={topic.id}
                   >
                     <li className="topic-item">{topic.name}</li>

@@ -39,7 +39,7 @@ function Header() {
         {username && (
           <>
             <div className="tools">
-              <Link to="/create" className="new-post-link">
+              <Link to="/create" className="new-post-link main-new-post-link">
                 <i className="fa fa-file-text" aria-hidden="true"></i>New Post
               </Link>
             </div>
@@ -49,6 +49,9 @@ function Header() {
                 <i className="fa fa-angle-double-down" aria-hidden="true"></i>
               </button>
               <div className="dropdown-content">
+                <Link to="/create" className="new-post-link">
+                  <i className="fa fa-file-text" aria-hidden="true"></i>New Post
+                </Link>
                 <Link to={`/profile/${userInfo?._id}`}>
                   <i className="fa fa-user" aria-hidden="true"></i>
                   Profile
@@ -56,8 +59,8 @@ function Header() {
                 <Link to="/explore-topics">
                   <i className="fa fa-hashtag" aria-hidden="true"></i>Topics
                 </Link>
-                <Link to="/create" className="new-post-link">
-                  <i className="fa fa-file-text" aria-hidden="true"></i>New Post
+                <Link to="/bookmarks/lists">
+                  <i className="fa fa-bookmark" aria-hidden="true"></i>Library
                 </Link>
                 <Link onClick={logout}>
                   <i className="fa fa-sign-out" aria-hidden="true"></i>

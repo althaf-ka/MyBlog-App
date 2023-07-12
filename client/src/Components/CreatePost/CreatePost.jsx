@@ -32,7 +32,9 @@ function CreatePost() {
     data.set("title", title);
     data.set("content", content);
     selectedTopicsArray.map(topic => data.append("topics[]", topic)); //To make selected topic to Array
-    data.set("file", files[0]);
+
+    const file = files[0] || null;
+    data.set("file", file);
 
     axios
       .post("/post", data, { withCredentials: true })
@@ -43,7 +45,7 @@ function CreatePost() {
       .catch(error => {
         //jwt token not verified so login again
         // console.log(error.response.data.message);
-        navigate("/login"); //HERE ERROR FIX NEEEDDED
+        navigate("/login"); //HERE ERROR FIX NEEEDDED notification
       });
   };
 
@@ -75,56 +77,89 @@ function CreatePost() {
     }
   };
 
+  const handleImageChange = e => {
+    const selectedFile = e.target.files[0];
+    // Check if the file type is an image
+    if (selectedFile && selectedFile.type.startsWith("image/")) {
+      setFiles(selectedFile);
+      setImagePreview(URL.createObjectURL(selectedFile));
+    } else {
+      e.target.value = null;
+      alert("Please select a valid image file.");
+      return;
+    }
+  };
+
   return (
-    <form onSubmit={createNewPost} encType="multipart/form-data">
-      <input
-        type="title"
-        placeholder="Title"
-        value={title}
-        required
-        onChange={e => {
-          setTitle(e.target.value);
-        }}
-      />
+    <div className="create-post-form-container">
+      <h2>Create a Post</h2>
+      <form onSubmit={createNewPost} encType="multipart/form-data">
+        <label htmlFor="title" className="create-form-label">
+          Title
+        </label>
+        <input
+          type="title"
+          placeholder="Title"
+          value={title}
+          required
+          className="create-form-input"
+          onChange={e => {
+            setTitle(e.target.value);
+          }}
+        />
 
-      {imagePreview && (
-        <div className="image-view">
-          <img src={imagePreview} alt="Poster" />
-        </div>
-      )}
-
-      <input
-        type="file"
-        required
-        onChange={e => {
-          setFiles(e.target.files);
-          setImagePreview(URL.createObjectURL(e.target.files[0]));
-        }}
-      />
-      <EditorQuill value={content} onChange={setContent} required />
-
-      {TopicErrMsg && <p className="error">{TopicErrMsg}</p>}
-      <Autocomplete
-        multiple
-        id="tags-filled"
-        options={suggestedTopics}
-        limitTags={5}
-        freeSolo
-        autoSelect
-        disablePortal={true}
-        renderInput={params => (
-          <TextField
-            {...params}
-            variant="filled"
-            label="Please select a minimum of five blog topics from the list or create your own topic."
-          />
+        <label className="create-form-label">
+          Thumbnail <span>(Image Only)</span>
+        </label>
+        {imagePreview && (
+          <div className="create-image-view">
+            <img
+              src={imagePreview}
+              alt="Poster"
+              className="create-preview-image"
+            />
+          </div>
         )}
-        value={selectedTopicsArray}
-        onChange={handleTopicChange}
-      />
 
-      <button className="createbtn">Create Post</button>
-    </form>
+        <input
+          type="file"
+          required
+          accept="image/*"
+          className="create-image-input create-form-input"
+          onChange={handleImageChange}
+        />
+
+        <label className="create-form-label">Tell your story..</label>
+        <EditorQuill value={content} onChange={setContent} />
+
+        <div className="create-topics-container">
+          <label className="create-form-label">Topics in story</label>
+          {TopicErrMsg && <p className="error">{TopicErrMsg}</p>}
+          <Autocomplete
+            multiple
+            id="tags-filled"
+            options={suggestedTopics}
+            limitTags={5}
+            freeSolo
+            autoSelect
+            disablePortal={true}
+            renderInput={params => (
+              <TextField
+                {...params}
+                variant="filled"
+                label="Please select a minimum of five blog topics from the list or create your own topic."
+              />
+            )}
+            value={selectedTopicsArray}
+            onChange={handleTopicChange}
+          />
+        </div>
+
+        <div className="create-btn-container">
+          <button className="create-btn">Create Post</button>
+        </div>
+      </form>
+    </div>
   );
 }
 

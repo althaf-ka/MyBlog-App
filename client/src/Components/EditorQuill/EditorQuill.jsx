@@ -18,17 +18,19 @@ function EditorQuill({ value, onChange }) {
     "link",
     "image",
     "video",
+    "align",
   ];
   const modules = {
     toolbar: [
       [{ header: "1" }, { header: "2" }, { font: [] }],
       [{ size: [] }],
-      ["bold", "italic", "underline", "strike", "blockquote"],
+      [{ align: [] }],
+      [("bold", "italic", "underline", "strike", "blockquote")],
       [{ list: "ordered" }, { list: "bullet" }],
-      ["link", "image", "video"],
-      ["clean"],
+      ["link", "image", "video", "clean"],
     ],
   };
+
   return (
     <>
       <ReactQuill

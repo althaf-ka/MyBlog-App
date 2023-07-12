@@ -25,9 +25,7 @@ const ClapButton = forwardRef(
       axios
         .get(
           `/total-applause-detail/?postId=${postId}&userId=${currentUserId}`,
-          {
-            signal: controller.signal,
-          }
+          { signal: controller.signal }
         )
         .then(response => {
           setUserClapCount(response.data?.currentUserClaps || 0);
@@ -75,6 +73,7 @@ const ClapButton = forwardRef(
 
       setIsClicked(true);
       setShowBubble(true);
+      setIsUserClapped(true);
 
       clearTimeout(bubbleTimerRef.current);
 
@@ -93,6 +92,7 @@ const ClapButton = forwardRef(
           withCredentials: true,
         })
         .then(res => {
+          setIsUserClapped(false);
           if (res.status === 200) return;
         })
         .catch(err => {

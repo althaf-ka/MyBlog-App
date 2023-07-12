@@ -6,6 +6,8 @@ import { format } from "date-fns";
 import { UserContext } from "../../../Context/UserContext";
 import ClapButton from "../ClapButton/ClapButton";
 import BlogOptions from "../BlogOptions/BlogOptions";
+import BookMark from "../BookMark/BookMark";
+import TailSpinLoader from "../TailSpinLoader/TailSpinLoader";
 
 function ViewSinglePost() {
   const { id } = useParams();
@@ -16,12 +18,40 @@ function ViewSinglePost() {
   const clapButtonRef = useRef(null);
 
   useEffect(() => {
-    axios.get(`/post/${id}`).then(response => {
-      setPostInfo(response.data);
-    });
-  }, []);
+    const controller = new AbortController();
 
-  if (!postInfo) return "";
+    const fetchData = async () => {
+      try {
+        const postResponse = await axios.get(`/post/${id}`, {
+          signal: controller.signal,
+        });
+        setPostInfo(prevValue => ({ ...prevValue, ...postResponse.data }));
+
+        // Fetch bookmark data if userInfo is present
+        if (userInfo && Object.keys(userInfo).length > 0) {
+          const bookmarkResponse = await axios.get(
+            `/users/bookmarks/${id}/${userInfo._id}`,
+            { signal: controller.signal },
+            { withCredentials: true }
+          );
+          setPostInfo(prevValue => ({
+            ...prevValue,
+            ...bookmarkResponse.data,
+          }));
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+    fetchData();
+
+    return () => {
+      controller.abort();
+    };
+  }, [userInfo]);
+
+  if (!postInfo)
+    return <TailSpinLoader size={70} wrapperClass="single-post-loader" />;
 
   const handleAuthorClick = () => {
     navigate(`/profile/${postInfo.userId}`);
@@ -42,7 +72,7 @@ function ViewSinglePost() {
         <div className="author">{postInfo.author}</div>
         <div className="image">
           <img
-            src={`http://localhost:4000/uploads/postImages/${postInfo.coverImageURL}`}
+            src={`/api/uploads/postImages/${postInfo.coverImageURL}`}
             alt="PosterImg"
           />
         </div>
@@ -77,7 +107,7 @@ function ViewSinglePost() {
         <div className="blog-author" onClick={handleAuthorClick}>
           <div className="author-image">
             <img
-              src={`http://localhost:4000/uploads/profilePicture/${postInfo?.profileImageURL}`}
+              src={`/api/uploads/profilePicture/${postInfo?.profileImageURL}`}
               alt="Author"
             />
           </div>
@@ -113,6 +143,13 @@ function ViewSinglePost() {
             authorId={postInfo?.userId}
             setIsUserClapped={setIsUserClapped}
           />
+
+          <BookMark
+            currentUserId={userInfo?._id}
+            postId={id}
+            isBookmarked={postInfo?.hasBookmark}
+          />
+
           <BlogOptions
             onCancelClaps={handleCancelAllClaps}
             isUserClapped={isUserClapped}

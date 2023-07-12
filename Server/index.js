@@ -9,11 +9,11 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 dotenv.config();
-import { connect as MongoConnect, db } from "./db/connection.js";
+import { connect as MongoConnect } from "./db/connection.js";
 import { postUpload, profileUpload } from "./blogHelpers/MulterUpload.js";
 
 const corsOptions = {
-  origin: "http://localhost:5173",
+  origin: "*",
   credentials: true,
 };
 app.use(cors(corsOptions));
@@ -177,6 +177,7 @@ app.get("/post", (req, res) => {
 
 app.get("/post/:id", (req, res) => {
   const postId = req.params.id;
+
   dbHelpers
     .getPostById(postId)
     .then(blogPost => {
@@ -193,7 +194,8 @@ app.delete("/post/delete/:id", authMiddleware, async (req, res) => {
     const user = req.user;
     const currentPostDetails = await dbHelpers.getPostById(postId);
     //Checking blog author from db
-    if (currentPostDetails.userId !== user._id) {
+
+    if (currentPostDetails.userId.toString() !== user._id.toString()) {
       throw { status: 401, message: "Only Blog Author Can Delete the Blog" };
     }
 
@@ -332,6 +334,114 @@ app.get("/total-applause-detail/", (req, res) => {
     })
     .catch(err => {
       console.log(err);
+    });
+});
+
+app.get(
+  "/bookmark/details/user/:currentUserId/:postId",
+  authMiddleware,
+  (req, res) => {
+    dbHelpers
+      .bookmarksOfPostsByUsers(req.params)
+      .then(response => {
+        res.status(response.status || 200).json(response);
+      })
+      .catch(err => {
+        res
+          .status(err.status || 500)
+          .json({ message: err.message || "Error in Fetching Bookmarks" });
+      });
+  }
+);
+
+app.post("/bookmark/save/:currentUserId", authMiddleware, (req, res) => {
+  const bookmarkDetails = {
+    currentUserId: req.params.currentUserId,
+    bookmarkListName: req.body.name,
+    postId: req.body.postId,
+  };
+  dbHelpers
+    .addBookmarkList(bookmarkDetails)
+    .then(response => {
+      res.status(response.status || 200).json(response);
+    })
+    .catch(err => {
+      res
+        .status(err.status || 500)
+        .json({ message: err.message || "Error in adding bookmark" });
+    });
+});
+
+app.put("/bookmark/delete/:currentUserId", authMiddleware, (req, res) => {
+  const bookmarkDetails = {
+    currentUserId: req.params.currentUserId,
+    bookmarkListName: req.body.name,
+    postId: req.body.postId,
+  };
+  dbHelpers
+    .removeBookmark(bookmarkDetails)
+    .then(response => {
+      res.status(response.status || 200).json(response);
+    })
+    .catch(err => {
+      res
+        .status(err.status || 500)
+        .json({ message: err.message || "Error in Removing Bookmark" });
+    });
+});
+
+app.get("/users/bookmarks/:postId/:userId", authMiddleware, (req, res) => {
+  dbHelpers
+    .isPostBookmarkedByUser(req.params)
+    .then(response => {
+      res.status(response.status || 200).json(response);
+    })
+    .catch(err => {
+      res
+        .status(err.status || 500)
+        .json({ message: err.message || "Error in Finding Bookmark" });
+    });
+});
+
+app.get("/bookmarks/lists/names/:userId", authMiddleware, (req, res) => {
+  dbHelpers
+    .getBookmarkListNamesWithCover(req.params.userId)
+    .then(response => {
+      res.status(response.status || 200).json(response);
+    })
+    .catch(err => {
+      res
+        .status(err.status || 500)
+        .json({ message: err.message || "Error in Finding Bookmark Lists" });
+    });
+});
+
+app.get("/bookmarks/list/posts/:name/:userId", authMiddleware, (req, res) => {
+  dbHelpers
+    .userBookmarkedPostList(req.params)
+    .then(response => {
+      res.status(response.status || 200).json(response);
+    })
+    .catch(err => {
+      res
+        .status(err.status || 500)
+        .json({ message: err.message || "Error in Finding Bookmarked Posts" });
+    });
+});
+
+app.put("/bookmarks/list/delete/:userId", authMiddleware, (req, res) => {
+  dbHelpers
+    .removeBookmarkList(req.params.userId, req.body.name)
+    .then(response => {
+      console.log(response, "node response");
+      res
+        .status(response.status || 200)
+        .json(response.message || "Bookmark deleted successfully");
+    })
+    .catch(err => {
+      res
+        .status(err.status || 500)
+        .json({ message: err.message || "Error in Deleting Bookmark List" });
     });
 });
 

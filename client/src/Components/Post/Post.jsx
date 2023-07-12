@@ -22,7 +22,7 @@ function Post({ _id, author, title, content, coverImageURL, createdAt, userId })
       <div className="post" onClick={handleDivClick}>
         <div className="image">
           <img
-            src={`http://localhost:4000/uploads/postImages/${coverImageURL}`}
+            src={`/api/uploads/postImages/${coverImageURL}`}
             alt="PosterImg"
           />
         </div>

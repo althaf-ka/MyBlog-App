@@ -1,0 +1,81 @@
+import { useContext, useEffect, useState } from "react";
+import "./BookmarksView.css";
+import axios from "../../../config/axios";
+import { UserContext } from "../../../Context/UserContext";
+import TailSpinLoader from "../TailSpinLoader/TailSpinLoader";
+import { useNavigate } from "react-router-dom";
+
+function BookmarksView() {
+  const { userInfo } = useContext(UserContext);
+  const [bookmarkLists, setBookmarkLists] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const fetchBookmarkNames = async () => {
+      try {
+        const bookmarkResponse = await axios.get(
+          `bookmarks/lists/names/${userInfo._id}`,
+          { signal: controller.signal },
+          { withCredentials: true }
+        );
+
+        setBookmarkLists(bookmarkResponse.data);
+        setIsLoading(false);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    //To prevent undefined api call till userId gets
+    if (userInfo && Object.keys(userInfo).length > 0) {
+      fetchBookmarkNames();
+    }
+
+    return () => {
+      controller.abort();
+    };
+  }, [userInfo]);
+
+  const handleListClick = (bookmarkName, storyCount) => {
+    const formattedBookmark = bookmarkName.toLowerCase().replace(/\s+/g, "-");
+    navigate(`/bookmarks/list/${formattedBookmark}/${userInfo._id}`);
+  };
+
+  return (
+    <div className="bookmark-list-container">
+      <h2>Your library</h2>
+
+      {isLoading ? (
+        <TailSpinLoader size={60} />
+      ) : (
+        bookmarkLists.map((bookmark, index) => (
+          <div
+            className="bookmark-card-container"
+            onClick={() => handleListClick(bookmark.name, bookmark.storyCount)}
+            key={index}
+          >
+            <div className="bookmark-details">
+              <h3>{bookmark.name}</h3>
+              <p>{bookmark.storyCount} Stories</p>
+            </div>
+
+            <div className="posts-img-cards">
+              {bookmark.coverImageURL.map((imgUrl, imgIndex) => (
+                <div className="image-box" key={imgIndex}>
+                  <img
+                    src={`/api/uploads/postImages/${imgUrl}`}
+                    alt="posterImg"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        ))
+      )}
+    </div>
+  );
+}
+
+export default BookmarksView;

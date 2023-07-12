@@ -116,7 +116,7 @@ function ViewProfile() {
             dataLength={postDetails.length}
             next={loadMore}
             hasMore={hasMore}
-            loader={<TailSpinLoader />}
+            loader={<TailSpinLoader size={60} />}
             scrollThreshold={0.8}
             style={{ overflow: "none" }}
             endMessage={<EndMessage />}

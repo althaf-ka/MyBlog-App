@@ -1,3 +1,108 @@
-.createbtn {
+.create-post-form-container {
+  display: flex;
+  flex-direction: column;
+  padding-left: 2%;
+  padding-right: 2%;
+}
+
+.create-post-form-container h2 {
+  margin-top: 0;
+}
+
+.create-form-input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+.create-form-label {
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.create-form-label span {
+  color: #999999;
+  font-size: 13px;
+}
+
+.create-image-view {
+  width: 240px;
+  height: auto;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.create-preview-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  margin: 0;
+}
+
+.create-image-input {
+  margin-bottom: 15px;
+  font-weight: 500;
+}
+.create-image-input::file-selector-button {
+  color: white;
+  margin-right: 20px;
+  padding: 0.5em;
+  border: none;
+  border-radius: 3px;
+  background-color: #3e8e41;
+  cursor: pointer;
+}
+
+.create-topics-container {
+  margin: 5% 0;
+}
+
+.create-btn-container {
+  text-align: right;
+  margin-top: 3%;
+}
+
+.create-btn {
+  background-color: #3e8e41;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.create-btn:hover {
+  background-color: #222;
+}
+
+.error {
+  color: #ff0000;
+  font-size: 14px;
   margin-top: 10px;
+}
+
+@media (max-width: 767px) {
+  .create-post-form-container {
+    padding: 0;
+  }
+
+  .create-form-input {
+    margin-bottom: 10px;
+  }
+
+  .create-image-input {
+    margin-bottom: 10px;
+  }
+
+  .create-image-view {
+    width: 210px;
+  }
+
+  .create-preview-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
 }

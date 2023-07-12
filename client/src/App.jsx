@@ -13,6 +13,8 @@ import ExploreTopicsPage from "./Pages/ExploreTopicsPage";
 import TopicDetailsPage from "./Pages/TopicDetailsPage";
 import ProfilePage from "./Pages/ProfilePage";
 import EditProfilePage from "./Pages/EditProfilePage";
+import BookmarksViewPage from "./Pages/BookmarksViewPage";
+import BookmarkPostsViewPage from "./Pages/BookmarkPostsViewPage";
 
 function App() {
   return (
@@ -50,6 +52,22 @@ function App() {
             element={
               <PrivateRoute>
                 <EditProfilePage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/bookmarks/lists"
+            element={
+              <PrivateRoute>
+                <BookmarksViewPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/bookmarks/list/:bookmarkName/:userId"
+            element={
+              <PrivateRoute>
+                <BookmarkPostsViewPage />
               </PrivateRoute>
             }
           />

@@ -40,7 +40,7 @@ function HomePagePosts() {
         dataLength={posts.length}
         next={loadMore}
         hasMore={hasMore}
-        loader={<TailSpinLoader />}
+        loader={<TailSpinLoader size={60} />}
         scrollThreshold={0.7}
         style={{ overflow: "none" }}
         endMessage={<EndMessage info={true} />}

@@ -1,5 +1,5 @@
 div.post-page {
-  margin-bottom: 10%;
+  margin-bottom: 15%;
 }
 
 div.post-page div.image {
@@ -136,9 +136,18 @@ div .updatedInfo time {
 }
 
 .main-blog-options-container {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
+  gap: 20px;
   max-width: 60%;
   margin: 2px auto;
-  justify-content: space-between;
+  user-select: none;
+}
+
+.single-post-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
 }

@@ -128,65 +128,94 @@ function EditPost() {
     }
   };
 
+  const handleImageChange = e => {
+    const selectedFile = e.target.files[0];
+    // Check if the file type is an image
+    if (selectedFile && selectedFile.type.startsWith("image/")) {
+      setState(prevState => {
+        return {
+          ...prevState,
+          files: e.target.files,
+          imageURL: URL.createObjectURL(e.target.files[0]),
+        };
+      });
+    } else {
+      e.target.value = null;
+      alert("Please select a valid image file.");
+      return;
+    }
+  };
+
   return (
-    <form onSubmit={updatePost} encType="multipart/form-data">
-      <input
-        type="title"
-        placeholder="Title"
-        value={title}
-        onChange={e => {
-          setState(prevState => {
-            return { ...prevState, title: e.target.value };
-          });
-        }}
-      />
-      <div className="image-view">
-        <img src={imageURL} alt="Poster" />
-      </div>
-      <input
-        type="file"
-        onChange={e => {
-          setState(prevState => {
-            return {
-              ...prevState,
-              files: e.target.files,
-              imageURL: URL.createObjectURL(e.target.files[0]),
-            };
-          });
-        }}
-      />
+    <div className="edit-post-form-conatiner">
+      <h2>Edit Post</h2>
+      <form onSubmit={updatePost} encType="multipart/form-data">
+        <label htmlFor="title" className="edit-form-label">
+          Title
+        </label>
+        <input
+          type="title"
+          placeholder="Title"
+          className="edit-form-input"
+          value={title}
+          onChange={e => {
+            setState(prevState => {
+              return { ...prevState, title: e.target.value };
+            });
+          }}
+        />
 
-      <EditorQuill
-        value={content}
-        onChange={value =>
-          setState(prevState => ({ ...prevState, content: value }))
-        }
-      />
+        <label className="edit-form-label">
+          Thumbnail <span>(Image Only)</span>
+        </label>
+        <div className="edit-image-view">
+          <img src={imageURL} alt="Poster" className="edit-preview-image" />
+        </div>
+        <input
+          type="file"
+          accept="image/*"
+          className="edit-image-input edit-form-input"
+          onChange={handleImageChange}
+        />
 
-      {/* Topics Section */}
+        <label className="edit-form-label">Tell your story..</label>
+        <EditorQuill
+          value={content}
+          onChange={value =>
+            setState(prevState => ({ ...prevState, content: value }))
+          }
+        />
 
-      {topicErrMsg && <p className="error">{topicErrMsg}</p>}
-      <Autocomplete
-        multiple
-        id="tags-filled"
-        options={suggestedTopics}
-        limitTags={5}
-        freeSolo
-        autoSelect
-        disablePortal={true}
-        renderInput={params => (
-          <TextField
-            {...params}
-            variant="filled"
-            label="Please select a minimum of five blog topics from the list or create your own topic."
+        {/* Topics Section */}
+
+        <div className="edit-topics-container">
+          <label className="edit-form-label">Topics in story</label>
+          {topicErrMsg && <p className="error">{topicErrMsg}</p>}
+          <Autocomplete
+            multiple
+            id="tags-filled"
+            options={suggestedTopics}
+            limitTags={5}
+            freeSolo
+            autoSelect
+            disablePortal={true}
+            renderInput={params => (
+              <TextField
+                {...params}
+                variant="filled"
+                label="Please select a minimum of five blog topics from the list or create your own topic."
+              />
+            )}
+            value={topics ? topics : []}
+            onChange={handleTopicChange}
           />
-        )}
-        value={topics ? topics : []}
-        onChange={handleTopicChange}
-      />
+        </div>
 
-      <button className="createbtn">Update Post</button>
-    </form>
+        <div className="edit-btn-container">
+          <button className="edit-btn">Update Post</button>
+        </div>
+      </form>
+    </div>
   );
 }
 

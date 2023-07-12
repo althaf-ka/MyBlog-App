@@ -2,6 +2,7 @@ import { db } from "../db/connection.js";
 import collection from "../db/collection.js";
 import bcrypt from "bcrypt";
 import { ObjectId } from "mongodb";
+import { response } from "express";
 
 export default {
   registerUser: (username, password) => {
@@ -136,12 +137,11 @@ export default {
   getPostById: postId => {
     //topic lookup to get topic id
     return new Promise(async (resolve, reject) => {
-      postId = new ObjectId(postId);
       try {
         const singleBlog = await db
           .collection(collection.POSTS_COLLECTION)
           .aggregate([
-            { $match: { _id: postId } },
+            { $match: { _id: new ObjectId(postId) } },
             {
               $lookup: {
                 from: collection.USERS_COLLECTION,
@@ -150,7 +150,6 @@ export default {
                 as: "author",
               },
             },
-            { $unwind: "$author" },
             {
               $lookup: {
                 from: collection.TOPICS_COLLECTION,
@@ -182,6 +181,7 @@ export default {
           .toArray();
         resolve(singleBlog[0]);
       } catch (err) {
+        console.log(err);
         reject(err);
       }
     });
@@ -593,6 +593,331 @@ export default {
           status: 400,
           message: "Failed Removing Claps" || err.message,
         });
+      }
+    });
+  },
+
+  bookmarksOfPostsByUsers: ({ currentUserId, postId }) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        postId = new ObjectId(postId);
+        const bookmarkDetailsResponse = await db
+          .collection(collection.BOOKMARK_COLLECTION)
+          .aggregate([
+            { $match: { userId: new ObjectId(currentUserId) } },
+            {
+              $project: {
+                bookmarks: {
+                  $map: {
+                    input: "$bookmarks",
+                    as: "bookmark",
+                    in: {
+                      name: "$$bookmark.name",
+                      hasPostId: {
+                        $in: [postId, "$$bookmark.postId"],
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            {
+              $unwind: "$bookmarks",
+            },
+            {
+              $project: {
+                _id: 0,
+                name: "$bookmarks.name",
+                checked: "$bookmarks.hasPostId",
+              },
+            },
+          ])
+          .toArray();
+
+        resolve(bookmarkDetailsResponse);
+      } catch (error) {
+        console.log(error);
+        reject({
+          status: 400,
+          message: "Error in Fetching Bookmarks",
+        });
+      }
+    });
+  },
+
+  addBookmarkList: ({ currentUserId, bookmarkListName, postId }) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        postId = new ObjectId(postId);
+        const addBookmarkResponse = await db
+          .collection(collection.BOOKMARK_COLLECTION)
+          .updateOne(
+            {
+              userId: new ObjectId(currentUserId),
+              "bookmarks.name": bookmarkListName,
+            },
+            {
+              $addToSet: {
+                "bookmarks.$.postId": postId,
+              },
+            }
+          );
+
+        if (addBookmarkResponse.matchedCount === 0) {
+          // Document doesn't exist, so insert a new one
+          await db.collection(collection.BOOKMARK_COLLECTION).updateOne(
+            { userId: new ObjectId(currentUserId) },
+            {
+              $push: {
+                bookmarks: {
+                  name: bookmarkListName,
+                  postId: [postId],
+                },
+              },
+            },
+            { upsert: true }
+          );
+        }
+
+        resolve({ status: 200, message: "Sucessfully Added Blog to Bookmark" });
+      } catch (error) {
+        console.log(error);
+        reject({
+          status: 400,
+          message: "Failed Adding bookmark" || err.message,
+        });
+      }
+    });
+  },
+
+  removeBookmark: ({ currentUserId, bookmarkListName, postId }) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        postId = new ObjectId(postId);
+        const removeResponse = await db
+          .collection(collection.BOOKMARK_COLLECTION)
+          .updateOne(
+            {
+              userId: new ObjectId(currentUserId),
+              "bookmarks.name": bookmarkListName,
+            },
+            { $pull: { "bookmarks.$.postId": postId } }
+          );
+
+        if (removeResponse.matchedCount === 1) {
+          resolve({ status: 200, message: "Bookmark removed successfully" });
+        }
+        resolve({ status: 200, message: "Bookmark removed successfully" });
+      } catch (error) {
+        reject({ status: 404, message: "Error in removing Bookmark" });
+        console.log(error);
+      }
+    });
+  },
+
+  isPostBookmarkedByUser: ({ postId, userId }) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        postId = new ObjectId(postId);
+        const bookmarkedResponse = await db
+          .collection(collection.BOOKMARK_COLLECTION)
+          .aggregate([
+            {
+              $match: {
+                userId: new ObjectId(userId),
+              },
+            },
+            {
+              $limit: 1,
+            },
+            {
+              $project: {
+                _id: 0,
+                hasBookmark: {
+                  $anyElementTrue: {
+                    $map: {
+                      input: "$bookmarks",
+                      as: "bookmark",
+                      in: { $in: [postId, "$$bookmark.postId"] },
+                    },
+                  },
+                },
+              },
+            },
+          ])
+          .toArray();
+
+        resolve(bookmarkedResponse[0]);
+      } catch (error) {
+        reject({ status: 404, message: "Error in Finding Bookmarks" });
+        console.log(error);
+      }
+    });
+  },
+
+  getBookmarkListNamesWithCover: userId => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const listResponse = await db
+          .collection(collection.BOOKMARK_COLLECTION)
+          .aggregate([
+            { $match: { userId: new ObjectId(userId) } },
+            {
+              $project: {
+                bookmarkList: {
+                  $map: {
+                    input: "$bookmarks",
+                    as: "bookmark",
+                    in: {
+                      name: "$$bookmark.name",
+                      storyCount: { $size: "$$bookmark.postId" },
+                      postIds: { $slice: ["$$bookmark.postId", 3] },
+                    },
+                  },
+                },
+              },
+            },
+            { $unwind: "$bookmarkList" },
+            {
+              $lookup: {
+                from: collection.POSTS_COLLECTION,
+                let: { postIds: "$bookmarkList.postIds" },
+                pipeline: [
+                  { $match: { $expr: { $in: ["$_id", "$$postIds"] } } },
+                  { $project: { coverImageURL: 1 } },
+                  { $limit: 3 },
+                ],
+                as: "coverImage",
+              },
+            },
+            {
+              $replaceRoot: {
+                newRoot: {
+                  name: "$bookmarkList.name",
+                  storyCount: "$bookmarkList.storyCount",
+                  coverImageURL: "$coverImage.coverImageURL",
+                },
+              },
+            },
+          ])
+          .toArray();
+
+        resolve(listResponse);
+      } catch (error) {
+        console.log(error);
+        reject({ status: 404, message: "Error in Finding Bookmark Lists" });
+      }
+    });
+  },
+
+  userBookmarkedPostList: ({ name, userId }) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const formattedListName = name.replace(/-/g, " ");
+        const bookmarkListResponse = await db
+          .collection(collection.BOOKMARK_COLLECTION)
+          .aggregate([
+            { $match: { userId: new ObjectId(userId) } },
+            {
+              $project: {
+                bookmarks: {
+                  $filter: {
+                    input: "$bookmarks",
+                    as: "bookmark",
+                    cond: {
+                      $regexMatch: {
+                        input: "$$bookmark.name",
+                        regex: new RegExp("^" + formattedListName, "i"),
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            { $unwind: "$bookmarks" },
+            {
+              $addFields: {
+                storyCount: { $size: "$bookmarks.postId" },
+              },
+            },
+            {
+              $lookup: {
+                from: collection.POSTS_COLLECTION,
+                let: { postIds: "$bookmarks.postId" },
+                pipeline: [
+                  { $match: { $expr: { $in: ["$_id", "$$postIds"] } } },
+                  {
+                    $lookup: {
+                      from: collection.USERS_COLLECTION,
+                      let: { authorId: "$userId" },
+                      pipeline: [
+                        { $match: { $expr: { $eq: ["$_id", "$$authorId"] } } },
+                        { $project: { name: 1, _id: 0 } },
+                      ],
+                      as: "author",
+                    },
+                  },
+                  {
+                    $project: {
+                      title: 1,
+                      coverImageURL: 1,
+                      author: { $arrayElemAt: ["$author.name", 0] },
+                      content: { $substr: ["$content", 0, 600] },
+                      createdAt: 1,
+                    },
+                  },
+                ],
+                as: "bookmarkedPosts",
+              },
+            },
+            {
+              $replaceRoot: {
+                newRoot: {
+                  name: "$bookmarks.name",
+                  storyCount: "$storyCount",
+                  bookmarkedPosts: "$bookmarkedPosts",
+                },
+              },
+            },
+          ])
+          .toArray();
+        console.log(bookmarkListResponse[0]);
+        resolve(bookmarkListResponse[0]);
+      } catch (error) {
+        console.log(error);
+        reject({ status: 404, message: "Error in Finding Bookmarked Posts" });
+      }
+    });
+  },
+
+  removeBookmarkList: (userId, name) => {
+    const bookmarkName = name;
+    return new Promise(async (resolve, reject) => {
+      try {
+        const deleteResponse = await db
+          .collection(collection.BOOKMARK_COLLECTION)
+          .updateOne(
+            {
+              userId: new ObjectId(userId),
+              "bookmarks.name": { $regex: new RegExp(bookmarkName, "i") },
+            },
+            {
+              $pull: {
+                bookmarks: {
+                  name: { $regex: new RegExp("^" + bookmarkName + "$", "i") },
+                },
+              },
+            }
+          );
+
+        if (deleteResponse.modifiedCount === 1) {
+          resolve({ status: 200, message: "Bookmark deleted successfully" });
+        }
+
+        resolve({ status: 200, message: "Bookmark deleted successfully" });
+      } catch (error) {
+        console.log(error);
+        reject({ status: 404, message: "Error in Deleting Bookmark List" });
       }
     });
   },

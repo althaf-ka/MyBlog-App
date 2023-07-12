@@ -1,0 +1,114 @@
+.bookmark-container {
+  position: relative;
+  justify-self: end;
+}
+.bookmark-icon {
+  cursor: pointer;
+}
+.bookmark-icon:hover {
+  stroke: #0e1111;
+  stroke-width: 0.5px;
+}
+
+.bookmark-options-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 260px;
+  background: #fff;
+  padding: 5px 0 10px 0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  z-index: 999;
+}
+
+.scrollable-bookmark-container {
+  max-height: 110px;
+  overflow-y: auto;
+  padding-left: 10px;
+}
+
+.bookmark-options-dropdown ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.bookmark-options-dropdown li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.bookmark-name-input-container {
+  border-top: 1px solid #ccc;
+  padding-top: 10px;
+  display: flex;
+  align-items: center;
+  padding-left: 10px;
+}
+
+.input-bookmark {
+  width: 210px;
+  height: 30px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 5px;
+  font-size: 14px;
+  margin-right: 6px;
+}
+
+.bookmark-add-btn {
+  width: 30px;
+  height: 30px;
+  border: none;
+  background-color: #000000;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.bookmark-add-btn:hover {
+  background-color: #449a4a;
+}
+
+.bookmark-add-btn i {
+  font-size: 14px;
+}
+
+.bookmark-checkbox {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #ccc;
+  border-radius: 3px;
+  outline: none;
+  transition: background-color 0.3s ease;
+  position: relative;
+  cursor: pointer;
+  margin-right: 10px;
+}
+.bookmark-checkbox:checked {
+  background-color: #449a4a;
+  border-color: #449a4a;
+}
+.bookmark-checkbox:checked::before {
+  content: "\f00c";
+  font-family: "FontAwesome";
+  font-size: 10px;
+  color: #fff;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.bookmark-loading {
+  display: flex;
+  justify-content: center;
+  padding-top: 14%;
+  padding-bottom: 14%;
+}
