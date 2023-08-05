@@ -8,7 +8,7 @@ import {
   getPostById,
   postsByAuthor,
 } from "../controllers/postController.js";
-import { postUpload } from "../blogHelpers/MulterUpload.js";
+import { postUpload } from "../utils/MulterUpload.js";
 
 const router = express.Router();
 

@@ -9,7 +9,7 @@ import {
   getUserDetail,
 } from "../controllers/userController.js";
 import { verifyToken } from "../middleware/authMiddleware.js";
-import { profileUpload } from "../blogHelpers/MulterUpload.js";
+import { profileUpload } from "../utils/MulterUpload.js";
 
 const router = express.Router();
 
