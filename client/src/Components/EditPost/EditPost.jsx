@@ -37,7 +37,7 @@ function EditPost() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get(`/post/${id}`).then(postInfo => {
+    axios.get(`/posts/${id}`).then(postInfo => {
       postInfo = postInfo.data;
       setState(prevState => ({
         ...prevState,
@@ -49,7 +49,7 @@ function EditPost() {
       }));
     });
 
-    axios.get("/topic-suggestions").then(suggestions => {
+    axios.get("/topics/topic-suggestions").then(suggestions => {
       //setting the suggestion topics in state
       setState(prevState => ({
         ...prevState,
@@ -72,13 +72,16 @@ function EditPost() {
     }
 
     axios
-      .put("/post", data, { withCredentials: true })
+      .put("/posts/edit", data, { withCredentials: true })
       .then(response => {
         console.log(response.data);
         navigate("/");
       })
       .catch(error => {
-        //jwt token not verified so login again
+        if (error.response.status === 401) {
+          //jwt token not verified so login again
+          navigate("/login");
+        }
         console.log(error);
         navigate("/login");
       });

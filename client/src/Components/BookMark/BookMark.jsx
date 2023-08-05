@@ -40,7 +40,7 @@ function BookMark({ currentUserId, postId, isBookmarked }) {
     try {
       let bookmarkPayload = { name: listName, postId };
       const response = await axios.post(
-        `/bookmark/save/${currentUserId}`,
+        `/bookmarks/save/${currentUserId}`,
         bookmarkPayload,
         { withCredentials: true }
       );
@@ -57,7 +57,7 @@ function BookMark({ currentUserId, postId, isBookmarked }) {
     try {
       let removeDetails = { name: listName, postId };
       const response = await axios.put(
-        `/bookmark/delete/${currentUserId}`,
+        `/bookmarks/delete/${currentUserId}`,
         removeDetails,
         { withCredentials: true }
       );
@@ -73,7 +73,7 @@ function BookMark({ currentUserId, postId, isBookmarked }) {
   const getCurrentUserBookmarkDetails = async () => {
     try {
       let userBookmarkDetails = await axios.get(
-        `/bookmark/details/user/${currentUserId}/${postId}`,
+        `/bookmarks/details/${currentUserId}/${postId}`,
         { withCredentials: true }
       );
 

@@ -22,7 +22,7 @@ function HomePagePosts() {
 
   const loadMore = async () => {
     try {
-      const blogPosts = await axios.get(`/post?skip=${posts.length}`);
+      const blogPosts = await axios.get(`/posts?skip=${posts.length}`);
 
       if (blogPosts.data.length === 0) {
         setHasMore(false);

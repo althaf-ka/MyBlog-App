@@ -9,7 +9,7 @@ function Header() {
 
   useEffect(() => {
     axios
-      .get("/profile", { withCredentials: true })
+      .get("/users/profile", { withCredentials: true })
       .then(response => {
         setUserInfo(response.data);
       })
@@ -21,7 +21,7 @@ function Header() {
 
   const logout = () => {
     axios.defaults.withCredentials = true;
-    axios.post("/logout").then(response => {
+    axios.post("/users/logout").then(response => {
       console.log(response.data.message);
       setUserInfo(null);
       window.location.reload();

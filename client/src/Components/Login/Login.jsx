@@ -22,20 +22,16 @@ function Login() {
     event.preventDefault();
     axios.defaults.withCredentials = true;
     try {
-      const response = await axios.post("/login", { username, password });
+      const response = await axios.post("/users/login", { username, password });
       //checking if there user and also sending jwt token to store in cookie
       if (response.data.username) {
         const { _id, username, name } = response.data;
         setUserInfo({ _id, username, name });
         navigate("/");
-      } else {
-        //Setting user or password unmatched errors
-        setErrMessage(response.data);
       }
     } catch (err) {
       //setting other login errors
-      console.log(err);
-      setErrMessage("Error occurred during login");
+      setErrMessage(err.response.data);
     }
   };
   return (

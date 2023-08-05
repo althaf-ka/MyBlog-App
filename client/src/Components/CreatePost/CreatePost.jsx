@@ -19,7 +19,7 @@ function CreatePost() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get("/topic-suggestions").then(suggestions => {
+    axios.get("/topics/topic-suggestions").then(suggestions => {
       //setting the suggestion topics
       const topics = suggestions.data.map(suggestion => suggestion.title);
       setSuggestedTopics(topics);
@@ -33,16 +33,17 @@ function CreatePost() {
     data.set("content", content);
     selectedTopicsArray.map(topic => data.append("topics[]", topic)); //To make selected topic to Array
 
-    const file = files[0] || null;
+    const file = files || null;
     data.set("file", file);
 
     axios
-      .post("/post", data, { withCredentials: true })
+      .post("/posts/add", data, { withCredentials: true })
       .then(response => {
         console.log(response.data);
         navigate("/");
       })
       .catch(error => {
+        console.log(error);
         //jwt token not verified so login again
         // console.log(error.response.data.message);
         navigate("/login"); //HERE ERROR FIX NEEEDDED notification

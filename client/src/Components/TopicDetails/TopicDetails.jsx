@@ -18,7 +18,7 @@ function TopicDetails() {
   useEffect(() => {
     const fetchTopicDetails = async () => {
       try {
-        const topicHeader = await axios.get(`/topic/details/${topicId}`);
+        const topicHeader = await axios.get(`/topics/details/${topicId}`);
         const { title, total } = topicHeader.data;
         setHeader({ title, total });
       } catch (err) {
@@ -35,7 +35,7 @@ function TopicDetails() {
   const loadMore = async () => {
     try {
       const topicBlogs = await axios.get(
-        `/topic/${topicId}/?skip=${postDetails?.length}`
+        `/topics/posts/${topicId}/?skip=${postDetails?.length}`
       );
       if (topicBlogs.data.length === 0) {
         setHasMore(false);

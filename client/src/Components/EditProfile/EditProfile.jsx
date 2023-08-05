@@ -58,7 +58,7 @@ function EditProfile() {
     }
 
     axios
-      .put("/profile", data, { withCredentials: true })
+      .put("/users/profile/details", data, { withCredentials: true })
       .then(response => {
         navigate("/");
         navigate(0); //to reload the page and change the header
@@ -197,7 +197,7 @@ function EditProfile() {
               <input
                 className="profile-input social"
                 type="text"
-                placeholder="Twitter Profile Link"
+                placeholder="Twitter Username"
                 onChange={event => handleSocialLinks(event, "twitter")}
                 value={socialLinks?.twitter}
               />
@@ -211,7 +211,7 @@ function EditProfile() {
               <input
                 className="profile-input social"
                 type="text"
-                placeholder="Instagram Profile Link"
+                placeholder="Instagram Username"
                 onChange={event => handleSocialLinks(event, "instagram")}
                 value={socialLinks?.instagram}
               />
@@ -224,7 +224,7 @@ function EditProfile() {
               <input
                 className="profile-input social"
                 type="text"
-                placeholder="Linkedin Profile Link"
+                placeholder="Linkedin Username"
                 onChange={event => handleSocialLinks(event, "linkedin")}
                 value={socialLinks?.linkedin}
               />

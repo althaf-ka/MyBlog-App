@@ -13,16 +13,18 @@ function Register() {
   const register = event => {
     event.preventDefault();
     axios
-      .post("/register", {
+      .post("/users/register", {
         username,
         password,
       })
       .then(response => {
-        if (response.data.error) setErrMessage(response.data.error.message);
-        else {
-          alert("Successfully Signed Up");
-          navigate("/login");
-        }
+        console.log(response);
+        alert("Successfully Signed Up");
+        navigate("/login");
+      })
+      .catch(err => {
+        console.log(err, "err");
+        if (err.response) setErrMessage(err.response.data);
       });
   };
 

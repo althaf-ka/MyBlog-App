@@ -4,7 +4,14 @@ import { format } from "date-fns";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "../../../config/axios";
 
-function AuthorBlogLists({_id ,title , createdAt, coverImageURL, setPostDetails, isAuthor}) {
+function AuthorBlogLists({
+  _id,
+  title,
+  createdAt,
+  coverImageURL,
+  setPostDetails,
+  isAuthor,
+}) {
   const navigate = useNavigate();
   const [showConfirmation, setShowConfirmation] = useState(false);
 
@@ -15,7 +22,7 @@ function AuthorBlogLists({_id ,title , createdAt, coverImageURL, setPostDetails,
 
   const handleConfirmDelete = async () => {
     try {
-      const deleteBlog = await axios.delete(`/post/delete/${_id}`, {
+      const deleteBlog = await axios.delete(`/posts/delete/${_id}`, {
         withCredentials: true,
       });
       console.log(deleteBlog);

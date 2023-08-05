@@ -12,7 +12,7 @@ function Topics() {
   useEffect(() => {
     const fetchSuggestions = async () => {
       try {
-        const response = await axios.get("/topic-suggestions");
+        const response = await axios.get("/topics/topic-suggestions");
         const suggestionTitles = response.data.map(suggestion => ({
           id: suggestion._id,
           name: suggestion.title,

@@ -21,7 +21,7 @@ function ViewProfile() {
     let ignore = false;
     const fetchUserDetails = async () => {
       try {
-        const response = await axios.get(`/profile/${userId}`);
+        const response = await axios.get(`/users/profile/${userId}`);
         if (!ignore) {
           setUserDetails(response.data);
           await loadMore(); //To load first initial posts
@@ -44,7 +44,7 @@ function ViewProfile() {
   const loadMore = async () => {
     try {
       const authorBlogs = await axios.get(
-        `/author-posts/${userId}/?skip=${postDetails.length}`
+        `/posts/author-posts/${userId}/?skip=${postDetails.length}`
       );
       if (authorBlogs.data.length === 0) {
         setHasMore(false);
@@ -84,24 +84,40 @@ function ViewProfile() {
           <p>{userDetails?.bio}</p>
           <div className="socials-conatiner">
             {userDetails?.socialLinks?.email && (
-              <Link to={`mailto:${userDetails.socialLinks.email}`}>
+              <a
+                href={`mailto:${userDetails.socialLinks.email}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <i className="fa fa-envelope" aria-hidden="true"></i>
-              </Link>
+              </a>
             )}
             {userDetails?.socialLinks?.twitter && (
-              <Link to={`/${userDetails.socialLinks.twitter}`}>
+              <a
+                href={`https://twitter.com/${userDetails.socialLinks.twitter}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <i className="fa fa-twitter" aria-hidden="true"></i>
-              </Link>
+              </a>
             )}
             {userDetails?.socialLinks?.instagram && (
-              <Link to={`/${userDetails.socialLinks.instagram}`}>
+              <a
+                href={`https://www.instagram.com/${userDetails.socialLinks.instagram}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <i className="fa fa-instagram" aria-hidden="true"></i>
-              </Link>
+              </a>
             )}
             {userDetails?.socialLinks?.linkedin && (
-              <Link to={`/${userDetails.socialLinks.linkedin}`}>
+              <a
+                href={`https://www.linkedin.com/in/${userDetails.socialLinks.linkedin}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <i className="fa fa-linkedin" aria-hidden="true"></i>
-              </Link>
+              </a>
             )}
           </div>
         </div>

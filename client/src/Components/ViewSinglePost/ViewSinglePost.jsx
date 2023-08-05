@@ -22,7 +22,7 @@ function ViewSinglePost() {
 
     const fetchData = async () => {
       try {
-        const postResponse = await axios.get(`/post/${id}`, {
+        const postResponse = await axios.get(`/posts/${id}`, {
           signal: controller.signal,
         });
         setPostInfo(prevValue => ({ ...prevValue, ...postResponse.data }));
@@ -30,7 +30,7 @@ function ViewSinglePost() {
         // Fetch bookmark data if userInfo is present
         if (userInfo && Object.keys(userInfo).length > 0) {
           const bookmarkResponse = await axios.get(
-            `/users/bookmarks/${id}/${userInfo._id}`,
+            `/bookmarks/users/${id}/${userInfo._id}`,
             { signal: controller.signal },
             { withCredentials: true }
           );

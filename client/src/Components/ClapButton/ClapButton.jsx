@@ -24,7 +24,7 @@ const ClapButton = forwardRef(
       const controller = new AbortController();
       axios
         .get(
-          `/total-applause-detail/?postId=${postId}&userId=${currentUserId}`,
+          `/applauses/total-applause-detail/?postId=${postId}&userId=${currentUserId}`,
           { signal: controller.signal }
         )
         .then(response => {
@@ -51,7 +51,7 @@ const ClapButton = forwardRef(
         authorId,
       };
       try {
-        await axios.post(`/post/applause/${postId}`, applauseDetails, {
+        await axios.post(`/applauses/add/${postId}`, applauseDetails, {
           withCredentials: true,
         });
       } catch (err) {
@@ -88,7 +88,7 @@ const ClapButton = forwardRef(
       setTotalClaps(pre => pre - userClapCount);
       setIsClicked(false);
       axios
-        .delete(`/applause/delete/${postId}/${currentUserId}`, {
+        .delete(`/applauses/delete/${postId}/${currentUserId}`, {
           withCredentials: true,
         })
         .then(res => {
