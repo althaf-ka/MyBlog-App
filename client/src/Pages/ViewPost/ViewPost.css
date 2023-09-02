@@ -1,0 +1,216 @@
+div.post-page {
+  margin-bottom: 15%;
+  max-width: 960px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+div.post-page div.image {
+  max-height: 390px;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+}
+
+div.post-page div.image img {
+  object-fit: cover;
+  object-position: center center;
+  max-width: 80%;
+  height: auto;
+}
+
+.post-page > h1:first-child {
+  text-align: center;
+  margin: 10px 0 18px;
+  font-size: 35px;
+  padding-bottom: 10px;
+}
+
+div.post-page time {
+  text-align: center;
+  display: block;
+  font-size: 0.7rem;
+  color: #aaa;
+}
+
+.post-page .down-section {
+  padding: 2.2rem;
+}
+
+div.post-page div.author {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 0.7rem;
+  font-weight: bold;
+}
+
+div.post-page div.content p {
+  line-height: 1.7rem;
+  margin-top: 20px;
+  font-size: 17px;
+}
+
+div.post-page div.content p img {
+  max-width: 50%;
+  margin-right: 20px;
+}
+
+div.post-page div.content h1 {
+  font-size: 1.5rem;
+}
+
+.post-page .content a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.post-page .content a:hover {
+  color: #0056b3;
+  text-decoration: underline;
+}
+
+div.edit-row {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+div.post-page a.edit-btn {
+  background-color: #333;
+  color: #fff;
+  border-radius: 5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  text-decoration: none;
+  transition: ease-out background-color 0.3s;
+}
+div.post-page a.edit-btn:hover {
+  background-color: #3e8e41;
+}
+
+a svg {
+  height: 20px;
+}
+
+.topics-btn-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 2rem 0;
+}
+
+.topic-pill-btn-singlepost {
+  display: inline-block;
+  text-decoration: none;
+  padding: 8px 13px;
+  border-radius: 20px;
+  background-color: #333;
+  font-size: 15px;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.topic-pill-btn-singlepost:hover {
+  background-color: green;
+}
+
+.blog-author {
+  display: flex;
+  align-items: center;
+  margin-top: 2%;
+  margin-bottom: 8%;
+  cursor: pointer;
+}
+
+.author-image {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-right: 10px;
+}
+
+.author-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.author-name {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.updatedInfo {
+  display: flex;
+  align-items: center;
+  color: #999;
+}
+
+.updatedInfo p {
+  font-size: 14px;
+  margin-right: 5px;
+}
+
+div .updatedInfo time {
+  font-size: 14px;
+}
+
+@media (max-width: 420px) {
+  .post-page > h1:first-child {
+    font-size: 1.4rem;
+  }
+}
+
+.main-blog-options-container {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 20px;
+  max-width: 60%;
+  margin: 2px auto;
+  user-select: none;
+}
+
+.single-post-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+}
+
+@media (max-width: 500px) {
+  div.post-page div.image img {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  div.post-page {
+    padding: 0 10px;
+  }
+
+  div.post-page > h1:first-child {
+    font-size: 25px;
+    margin: 8px 0 12px;
+    padding-bottom: 5px;
+  }
+
+  .post-page .down-section {
+    padding: 0;
+  }
+
+  .main-blog-options-container {
+    max-width: 80%;
+  }
+  div.post-page div.content p {
+    line-height: 1.5rem;
+    font-size: 15px;
+  }
+  .updatedInfo p {
+    font-size: 14px;
+  }
+  div.post-page div.content h1 {
+    font-size: 1rem;
+  }
+}

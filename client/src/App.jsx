@@ -3,18 +3,18 @@ import { Route, Routes } from "react-router-dom";
 import { UserContextProvider } from "../Context/UserContext";
 import Layout from "./Layout";
 import PrivateRoute from "../PrivateRoute";
-import IndexPage from "./Pages/IndexPage";
-import LoginPage from "./Pages/LoginPage";
-import RegisterPage from "./Pages/RegisterPage";
-import CreatePostPage from "./Pages/CreatePostPage";
-import PostPage from "./Pages/PostPage";
-import EditPostPage from "./Pages/EditPostPage";
-import ExploreTopicsPage from "./Pages/ExploreTopicsPage";
-import TopicDetailsPage from "./Pages/TopicDetailsPage";
-import ProfilePage from "./Pages/ProfilePage";
-import EditProfilePage from "./Pages/EditProfilePage";
-import BookmarksViewPage from "./Pages/BookmarksViewPage";
-import BookmarkPostsViewPage from "./Pages/BookmarkPostsViewPage";
+import IndexPage from "./Pages/IndexPage/IndexPage";
+import Login from "./Pages/Login/Login";
+import Register from "./Pages/Register/Register";
+import CreatePost from "./Pages/CreatePost/CreatePost";
+import ViewPost from "./Pages/ViewPost/ViewPost";
+import EditPost from "./Pages/EditPost/EditPost";
+import ExploreTopics from "./Pages/ExploreTopics/ExploreTopics";
+import TopicDetails from "./Pages/TopicDetails/TopicDetails";
+import Profile from "./Pages/Profile/Profile";
+import EditProfile from "./Pages/EditProfile/EditProfile";
+import BookmarkView from "./Pages/BookmarkView/BookmarkView";
+import BookmarkPostsView from "./Pages/BookmarkPostsView/BookmarkPostsView";
 
 function App() {
   return (
@@ -22,36 +22,36 @@ function App() {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<IndexPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
           <Route
             path="/create"
             element={
               <PrivateRoute>
-                <CreatePostPage />
+                <CreatePost />
               </PrivateRoute>
             }
           />
-          <Route path="/post/:id" element={<PostPage />} />
+          <Route path="/post/:id" element={<ViewPost />} />
           <Route
             path="/edit/:id"
             element={
               <PrivateRoute>
-                <EditPostPage />
+                <EditPost />
               </PrivateRoute>
             }
           />
-          <Route path="/explore-topics" element={<ExploreTopicsPage />} />
+          <Route path="/explore-topics" element={<ExploreTopics />} />
           <Route
             path="/topics/:topicName/:topicId"
-            element={<TopicDetailsPage />}
+            element={<TopicDetails />}
           />
-          <Route path="/profile/:userId" element={<ProfilePage />} />
+          <Route path="/profile/:userId" element={<Profile />} />
           <Route
             path="/profile/edit/:userId"
             element={
               <PrivateRoute>
-                <EditProfilePage />
+                <EditProfile />
               </PrivateRoute>
             }
           />
@@ -59,7 +59,7 @@ function App() {
             path="/bookmarks/lists"
             element={
               <PrivateRoute>
-                <BookmarksViewPage />
+                <BookmarkView />
               </PrivateRoute>
             }
           />
@@ -67,7 +67,7 @@ function App() {
             path="/bookmarks/list/:bookmarkName/:userId"
             element={
               <PrivateRoute>
-                <BookmarkPostsViewPage />
+                <BookmarkPostsView />
               </PrivateRoute>
             }
           />

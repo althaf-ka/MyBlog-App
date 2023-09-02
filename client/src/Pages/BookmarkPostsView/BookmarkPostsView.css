@@ -1,0 +1,20 @@
+.bookmark-posts-view-container {
+  margin: 0 auto;
+  max-width: 1000px;
+}
+
+.bookmark-posts-view-container p {
+  margin-top: 0;
+}
+
+.view-bookmark-posts-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bookmark-list-options-dropdown {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}

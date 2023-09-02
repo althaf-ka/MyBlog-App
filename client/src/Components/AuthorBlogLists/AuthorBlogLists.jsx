@@ -4,14 +4,9 @@ import { format } from "date-fns";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "../../../config/axios";
 
-function AuthorBlogLists({
-  _id,
-  title,
-  createdAt,
-  coverImageURL,
-  setPostDetails,
-  isAuthor,
-}) {
+function AuthorBlogLists(props) {
+  const { _id, title, createdAt, coverImageURL, setPostDetails, isAuthor } =
+    props;
   const navigate = useNavigate();
   const [showConfirmation, setShowConfirmation] = useState(false);
 

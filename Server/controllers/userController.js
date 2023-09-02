@@ -7,7 +7,7 @@ export const registerUser = (req, res, next) => {
   userService
     .registerUser(username, password)
     .then(response => {
-      res.status(response.status || 200).json(response.message);
+      res.status(response.status || 200).json(response);
     })
     .catch(error => {
       console.log(error, "Error in controller");

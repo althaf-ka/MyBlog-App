@@ -1,0 +1,27 @@
+.login-container {
+  max-width: 768px;
+  margin: 0 auto;
+  padding-top: 3%;
+}
+
+.login-btn {
+  display: flex;
+  justify-content: flex-end;
+}
+
+form.login h1 {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.error-login {
+  color: red;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .login-container {
+    padding-left: 3%;
+    padding-right: 3%;
+  }
+}

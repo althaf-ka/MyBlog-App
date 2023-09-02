@@ -1,0 +1,12 @@
+.button-style {
+  border-radius: 4px;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  background-color: #3e8e41;
+}
+
+.button-style:hover {
+  background-color: #555;
+}

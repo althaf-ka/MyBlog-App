@@ -1,28 +1,17 @@
 import { useEffect, useState } from "react";
 import "./BlogOptions.css";
+import { ThreeDotsIcon } from "../../assets";
+import useClickOutside from "../../Hooks/useClickOutside";
 
 function BlogOptions({ onCancelClaps, isUserClapped }) {
   const [menuVisible, setMenuVisible] = useState(false);
 
-  useEffect(() => {
-    if (menuVisible) {
-      window.addEventListener("click", handleClickOutside);
-    } else {
-      window.removeEventListener("click", handleClickOutside);
-    }
-    return () => {
-      window.removeEventListener("click", handleClickOutside);
-    };
-  }, [menuVisible]);
+  const dropDownNode = useClickOutside(() => {
+    setMenuVisible(false);
+  });
 
   const showMenuOfBlog = () => {
     setMenuVisible(!menuVisible);
-  };
-
-  const handleClickOutside = event => {
-    if (!event.target.closest(".more-action-btn-container")) {
-      setMenuVisible(false);
-    }
   };
 
   const handleCancelClaps = () => {
@@ -41,29 +30,21 @@ function BlogOptions({ onCancelClaps, isUserClapped }) {
   };
 
   return (
-    <div className="more-action-btn-container">
+    <div className="more-action-btn-container" ref={dropDownNode}>
       <div className="more-action-btn">
         <button className="three-dot-btn" onClick={showMenuOfBlog}>
-          <i
-            className="fa fa-ellipsis-h blog-options-btn"
-            aria-hidden="true"
-          ></i>
+          <ThreeDotsIcon size={28} />
         </button>
       </div>
-
       {menuVisible && (
-        <div className="blog-options-dropdown-menu">
+        <ul className="blog-options-dropdown-menu">
+          <li onClick={copyToClipboard}>Copy Link To Clipboard</li>
           {isUserClapped && (
-            <span onClick={handleCancelClaps}>
-              <i className="fa fa-undo" aria-hidden="true"></i>
+            <li onClick={handleCancelClaps} className="cancel-red">
               Cancel Previous Applause
-            </span>
+            </li>
           )}
-          <span onClick={copyToClipboard}>
-            <i className="fa fa-clipboard" aria-hidden="true"></i>
-            Copy Link To Clipboard
-          </span>
-        </div>
+        </ul>
       )}
     </div>
   );

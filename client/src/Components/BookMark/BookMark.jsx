@@ -1,40 +1,29 @@
 import "./BookMark.css";
-import BookMarkIcon from "../../assets/BookMarkIcon";
+import { BookmarkIcon } from "../../assets";
 import { useEffect, useState } from "react";
 import axios from "../../../config/axios";
-import RoatingLinesLoader from "../RoatingLinesLoader/RoatingLinesLoader";
-import TailSpinLoader from "../TailSpinLoader/TailSpinLoader";
+import RoatingLinesLoader from "../Loaders/RoatingLinesLoader";
+import TailSpinLoader from "../Loaders/TailSpinLoader";
 import SignInOrUpModel from "../SignInOrUpModel/SignInOrUpModel";
+import useClickOutside from "../../Hooks/useClickOutside";
 
 function BookMark({ currentUserId, postId, isBookmarked }) {
-  const [bookmarkToggle, setBookmarkToggle] = useState({
-    iconClicked: false,
-    showModel: false,
-  });
+  const [iconClicked, setIconClicked] = useState(false);
+  const [showModel, setShowModel] = useState(false);
   const [bookmarkName, setBookmarkName] = useState("");
   const [bookmarks, setBookmarks] = useState([]);
   const [loadingIndex, setLoadingIndex] = useState(null);
   const [showLoginRequired, setShowLoginRequired] = useState(false);
   const [bookmarkDetailsFetched, setBookmarkDetailsFetched] = useState(false);
+  let isRequestPending = false;
 
   useEffect(() => {
-    const handleClickOutside = event => {
-      if (!event.target.closest(".bookmark-container")) {
-        setBookmarkToggle(prevState => ({ ...prevState, showModel: false }));
-      }
-    };
-    if (bookmarkToggle.showModel) {
-      window.addEventListener("click", handleClickOutside);
-    }
+    setIconClicked(isBookmarked);
+  }, [isBookmarked]);
 
-    return () => {
-      window.removeEventListener("click", handleClickOutside);
-    };
-  }, [bookmarkToggle.showModel]);
-
-  if (isBookmarked && !bookmarkToggle.iconClicked) {
-    setBookmarkToggle(prevState => ({ ...prevState, iconClicked: true }));
-  }
+  const bookmarkNode = useClickOutside(() => {
+    setShowModel(false);
+  });
 
   const storeBookmarkToDb = async (listName, postId) => {
     try {
@@ -71,6 +60,11 @@ function BookMark({ currentUserId, postId, isBookmarked }) {
   };
 
   const getCurrentUserBookmarkDetails = async () => {
+    if (isRequestPending) {
+      return;
+    }
+    isRequestPending = true;
+
     try {
       let userBookmarkDetails = await axios.get(
         `/bookmarks/details/${currentUserId}/${postId}`,
@@ -78,13 +72,44 @@ function BookMark({ currentUserId, postId, isBookmarked }) {
       );
 
       let prevBookmarks = userBookmarkDetails.data;
+      let response;
+
       if (prevBookmarks.length === 0) {
-        setBookmarks([{ name: "Reading List", checked: false }]);
-      } else {
-        setBookmarks(prevBookmarks);
+        prevBookmarks = [{ name: "Reading List", checked: false }];
+        response = await addReadingListToDb();
+      } else if (prevBookmarks.every(bookmark => !bookmark.checked)) {
+        response = await addReadingListToDb(); // If no bookmark is checked
       }
+
+      if (response) {
+        const readingListIndex = prevBookmarks.findIndex(
+          bookmark => bookmark.name === "Reading List"
+        );
+        if (readingListIndex !== -1) {
+          prevBookmarks[readingListIndex].checked = true;
+        }
+        setIconClicked(true);
+      }
+
+      setBookmarks(prevBookmarks);
     } catch (error) {
       console.log(error);
+      await getCurrentUserBookmarkDetails(); //Retry req
+    } finally {
+      isRequestPending = false;
+    }
+  };
+
+  const addReadingListToDb = async () => {
+    setLoadingIndex(0);
+    try {
+      const result = await storeBookmarkToDb("Reading List", postId);
+      setLoadingIndex(false);
+      return result;
+    } catch (err) {
+      console.log(err);
+      setLoadingIndex(false);
+      return false;
     }
   };
 
@@ -95,47 +120,11 @@ function BookMark({ currentUserId, postId, isBookmarked }) {
     }
 
     if (!bookmarkDetailsFetched) {
-      getCurrentUserBookmarkDetails();
+      await getCurrentUserBookmarkDetails();
       setBookmarkDetailsFetched(true);
     }
 
-    const isAnyBookmarkChecked = bookmarks.some(bookmark => bookmark.checked);
-
-    if (isAnyBookmarkChecked) {
-      setBookmarkToggle(prevState => ({
-        showModel: !prevState.showModel,
-        iconClicked: true,
-      }));
-    } else {
-      //If no bookmark is checked then auto check Reading List
-      setBookmarkToggle(prevState => ({
-        iconClicked: !prevState.iconClicked,
-        showModel: !prevState.showModel,
-      }));
-      setBookmarks(prevBookmarks => {
-        return prevBookmarks.map(bookmark => {
-          if (bookmark.name === "Reading List") {
-            return { ...bookmark, checked: false };
-          }
-          return bookmark;
-        });
-      });
-      try {
-        const readingListIndex = 0; // Index of "Reading List" bookmark
-        setLoadingIndex(readingListIndex);
-
-        const result = await storeBookmarkToDb("Reading List", postId);
-        result
-          ? updateBookmarkState(readingListIndex, true)
-          : updateBookmarkState(readingListIndex, false);
-
-        setLoadingIndex(null);
-      } catch (err) {
-        console.log(err);
-        setLoadingIndex(null);
-        updateBookmarkState(0, false);
-      }
-    }
+    setShowModel(prevState => !prevState);
   };
 
   const handleBookmarkNameChange = e => {
@@ -175,30 +164,25 @@ function BookMark({ currentUserId, postId, isBookmarked }) {
   const isAllBookmarkUnchecked = bookmarks => {
     const areAllCheckedFalse = bookmarks.every(bookmark => !bookmark.checked);
     if (areAllCheckedFalse) {
-      setBookmarkToggle({ iconClicked: false, showModel: false });
+      setIconClicked(false);
+      setShowModel(false);
     }
   };
 
   const handleToggleBookmark = async (index, e) => {
     const { name } = bookmarks[index];
     const toggleChecked = e.target.checked;
+    setIconClicked(true);
+
     setLoadingIndex(index);
 
     try {
-      let result;
-      if (toggleChecked) {
-        result = await storeBookmarkToDb(name, postId);
-      } else {
-        result = await removeBookmarkFromDb(name, postId);
-      }
+      const result = toggleChecked
+        ? await storeBookmarkToDb(name, postId)
+        : await removeBookmarkFromDb(name, postId);
 
-      if (result) {
-        setLoadingIndex(null);
-        updateBookmarkState(index, toggleChecked);
-      } else {
-        setLoadingIndex(null);
-        updateBookmarkState(index, !toggleChecked); //If db fails maintain same checkbox value
-      }
+      setLoadingIndex(null);
+      updateBookmarkState(index, result ? toggleChecked : !toggleChecked);
     } catch (err) {
       console.log(err);
       setLoadingIndex(null);
@@ -208,11 +192,11 @@ function BookMark({ currentUserId, postId, isBookmarked }) {
 
   return (
     <>
-      <div className="bookmark-container">
+      <div className="bookmark-container" ref={bookmarkNode}>
         <div className="bookmark-icon" onClick={handleBookMarkClick}>
-          <BookMarkIcon isClicked={bookmarkToggle.iconClicked} />
+          <BookmarkIcon isClicked={iconClicked} size={28} />
         </div>
-        {bookmarkToggle.showModel && (
+        {showModel && (
           <div className="bookmark-options-dropdown">
             <div className="scrollable-bookmark-container">
               {bookmarks.length === 0 && (

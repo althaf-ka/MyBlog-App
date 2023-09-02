@@ -1,0 +1,50 @@
+.topic-details-container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.topic-details-header {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 2%;
+  margin-top: -20px;
+}
+
+.topic-title {
+  text-align: center;
+  padding-top: 0.9rem;
+}
+.topic-title svg {
+  margin-right: 4px;
+}
+
+.stories-span {
+  display: flex;
+}
+
+.topic-total {
+  text-align: center;
+}
+
+.post-list {
+  margin: 0 2%;
+}
+
+@media (max-width: 768px) {
+  .topic-title {
+    text-align: left;
+    padding-right: 3%;
+    padding-top: 0;
+  }
+  .topic-total {
+    display: flex;
+    font-weight: 600;
+    text-align: left;
+    margin-left: 7%;
+  }
+  .stories-span {
+    display: inline-block;
+    padding-left: 5%;
+    font-weight: 400;
+  }
+}

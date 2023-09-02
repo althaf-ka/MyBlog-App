@@ -1,0 +1,30 @@
+/* Index Page */
+
+.home-layout-container {
+  font-size: 1rem;
+  display: grid;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  gap: 1rem;
+  grid-template-columns: 240px 3fr;
+  padding: 1rem;
+}
+
+@media (max-width: 1024px) {
+  .home-layout-container {
+    gap: 0.5rem;
+    grid-template-columns: 240px 5fr;
+    padding: 0.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .home-layout-container {
+    grid-template-columns: 100%;
+    padding: 0;
+  }
+  .home-layout-container .sidebar-layout-container {
+    display: none;
+  }
+}

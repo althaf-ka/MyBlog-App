@@ -1,0 +1,138 @@
+.edit-profile-container {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.edit-profile-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-input {
+  width: 100%;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  resize: none;
+  outline: none;
+}
+.profile-input:focus {
+  border: 2px solid black;
+}
+
+.preview-profile-picture {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  margin-bottom: 3%;
+}
+
+.message-span {
+  opacity: 68%;
+  font-size: 0.7rem;
+}
+
+.input-container {
+  position: relative;
+}
+
+.profile-input.error {
+  border-color: red;
+}
+
+.bio-input {
+  margin-bottom: 25px;
+}
+.bio-label {
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+.bio-char-count {
+  position: absolute;
+  bottom: 23px;
+  right: 5px;
+  font-size: 14px;
+  color: #ccc;
+}
+
+.error-message-profile {
+  color: red;
+  font-size: 14px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.save-changes-button {
+  background-color: #4caf50;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.save-changes-button:hover {
+  background-color: #3e8e41;
+}
+
+.icon-box {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 10px;
+  width: 200px;
+  position: relative;
+}
+
+.socials-container {
+  margin-bottom: 20px;
+}
+
+.social-wrapper {
+  display: flex;
+  width: 90%;
+}
+
+.socials {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 10px;
+}
+
+.socials-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 3rem;
+  height: 3rem;
+  border: 1px solid #ccc;
+  border-radius: 10%;
+  margin-right: 1%;
+}
+.socials-box i {
+  padding: 0;
+  font-size: 24px;
+}
+.profile-input.social {
+  height: 3rem;
+  width: 100%;
+}
+
+@media (max-width: 600px) {
+  .edit-profile-container {
+    max-width: 100%;
+  }
+  .socials {
+    display: inline;
+  }
+  .socials span {
+    display: none;
+  }
+  .social-wrapper {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+}

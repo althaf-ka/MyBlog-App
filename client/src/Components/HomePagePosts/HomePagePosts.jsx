@@ -3,7 +3,7 @@ import "./HomePagePosts.css";
 import Post from "../Post/Post";
 import axios from "../../../config/axios";
 import InfiniteScroll from "react-infinite-scroll-component";
-import TailSpinLoader from "../TailSpinLoader/TailSpinLoader";
+import TailSpinLoader from "../Loaders/TailSpinLoader";
 import EndMessage from "../EndMessage/EndMessage";
 import ScrollToTopButton from "../ScrollToTopButton/ScrollToTopButton";
 

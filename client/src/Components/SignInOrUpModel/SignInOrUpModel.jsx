@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import "./SignInOrUpModel.css";
 
 function SignInOrUpModel({ message, isVisible }) {
@@ -16,7 +17,9 @@ function SignInOrUpModel({ message, isVisible }) {
         <button className="register-mail-modal-button">Register Now</button>
         <p className="signin-up-modal-text">
           Already have an account?{" "}
-          <span className="model-sign-in">Sign In</span>
+          <Link to={"/login"}>
+            <span className="model-sign-in">Sign In</span>
+          </Link>
         </p>
       </div>
     </div>

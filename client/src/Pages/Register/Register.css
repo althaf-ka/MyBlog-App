@@ -1,0 +1,27 @@
+.register-container {
+  max-width: 768px;
+  margin: 0 auto;
+  padding-top: 3%;
+}
+
+.register-btn {
+  display: flex;
+  justify-content: flex-end;
+}
+
+form.register h1 {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.error-register {
+  color: red;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .register-container {
+    padding-left: 3%;
+    padding-right: 3%;
+  }
+}

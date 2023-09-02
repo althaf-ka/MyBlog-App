@@ -11,12 +11,17 @@ const registerUser = (username, password) => {
       await db
         .collection(collection.USERS_COLLECTION)
         .createIndex({ username: 1 }, { unique: true });
-      await db.collection(collection.USERS_COLLECTION).insertOne({
-        username,
-        password,
-      });
+      const newUsr = await db
+        .collection(collection.USERS_COLLECTION)
+        .insertOne({
+          username,
+          password,
+        });
 
-      resolve({ message: "Successfully Registered" });
+      resolve({
+        message: "Successfully Registered",
+        newUserId: newUsr.insertedId,
+      });
     } catch (error) {
       if (error.code === 11000) {
         // Handle duplicate username error

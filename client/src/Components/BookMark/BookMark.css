@@ -112,3 +112,9 @@
   padding-top: 14%;
   padding-bottom: 14%;
 }
+
+@media (max-width: 768px) {
+  .bookmark-options-dropdown {
+    transform: translateX(-70%);
+  }
+}

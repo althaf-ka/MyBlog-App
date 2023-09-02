@@ -1,0 +1,106 @@
+.topic-explore-container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding-top: 5px;
+}
+
+.Topic-header {
+  display: block;
+  align-items: center;
+  text-align: center;
+  max-width: 75%;
+  margin: 0 auto;
+}
+
+.explore-topics-btn-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  text-align: center;
+  max-width: 75%;
+  margin: 3.6rem auto;
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .Topic-header {
+    text-align: left;
+    max-width: 96%;
+  }
+  .explore-topics-btn-container {
+    display: flex;
+    gap: 10px;
+    max-width: 96%;
+    margin: 2rem auto;
+    justify-content: flex-start;
+  }
+}
+
+.topic-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  padding: 6px 16px;
+  border-radius: 20px;
+  background-color: #f3f3f3;
+  font-size: 14px;
+  font-weight: 500;
+  color: #121212;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.topic-pill-btn:hover {
+  background-color: #e0e0e0;
+}
+
+.more-btn {
+  max-width: fit-content;
+  border: 1px solid black;
+}
+.clicked {
+  background-color: #3e8e41;
+}
+
+.topics-box {
+  overflow: scroll;
+  overflow-x: hidden;
+  display: block;
+  align-items: center;
+  text-align: center;
+  margin: 4% auto;
+  max-height: 400px;
+  max-width: 75%;
+  flex: 1;
+}
+
+.letters-sticky {
+  position: sticky;
+  top: 0px;
+  background-color: #353a3c;
+  color: white;
+  padding: 5px;
+  z-index: 1;
+  font-weight: 600;
+}
+
+.topic-list {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.topic-item {
+  cursor: pointer;
+  padding: 5px;
+  font-weight: 500;
+}
+.topic-item:hover {
+  background-color: #e0e0e0;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}

@@ -1,11 +1,23 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "./Header.css";
 import { Link } from "react-router-dom";
 import axios from "../../../config/axios";
 import { UserContext } from "../../../Context/UserContext";
+import RoundProfilePicture from "../RoundProfilePicture/RoundProfilePicture";
+import DropdownMenu from "../DropdownMenu/DropdownMenu";
+import { HamburgerMenuIcon } from "../../assets";
+import HamburgerMenu from "../HamburgerMenu/HamburgerMenu";
+import useClickOutside from "../../Hooks/useClickOutside";
 
 function Header() {
   const { userInfo, setUserInfo } = useContext(UserContext);
+
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isHamburgerMenuOpen, setIsHamburgerMenuOpen] = useState(false);
+
+  const handleDropdownToggle = () => {
+    setIsDropdownOpen(prevState => !prevState);
+  };
 
   useEffect(() => {
     axios
@@ -17,7 +29,15 @@ function Header() {
         console.log(err.message, "User Not Logged In");
         setUserInfo(null);
       });
-  }, []);
+  }, [userInfo?._id]);
+
+  const handleHamburgerClick = () => {
+    setIsHamburgerMenuOpen(prevState => !prevState);
+  };
+
+  const dropdownNode = useClickOutside(() => {
+    setIsDropdownOpen(false);
+  });
 
   const logout = () => {
     axios.defaults.withCredentials = true;
@@ -28,56 +48,83 @@ function Header() {
     });
   };
 
+  const handleOptionClick = index => {
+    if (index === 3) {
+      logout();
+    }
+
+    setIsDropdownOpen(false);
+  };
+
+  const options = [
+    { name: userInfo?.name, path: `/profile/${userInfo?._id}` },
+    { name: "Create Post", path: "/create" },
+    { name: "Bookmark", path: "/bookmarks/lists" },
+    { name: "Log Out", path: false },
+  ];
+
   const username = userInfo?.username;
 
   return (
-    <header>
-      <Link to="/" className="logo">
-        MyBlog
-      </Link>
-      <nav>
-        {username && (
-          <>
-            <div className="tools">
-              <Link to="/create" className="new-post-link main-new-post-link">
-                <i className="fa fa-file-text" aria-hidden="true"></i>New Post
-              </Link>
-            </div>
-            <div className="dropdown">
-              <button className="dropbtn">
-                {userInfo?.name}
-                <i className="fa fa-angle-double-down" aria-hidden="true"></i>
-              </button>
-              <div className="dropdown-content">
-                <Link to="/create" className="new-post-link">
-                  <i className="fa fa-file-text" aria-hidden="true"></i>New Post
+    <>
+      <header id="main-header">
+        <div className="header-container">
+          <span className="hamburger-btn">
+            <button onClick={handleHamburgerClick}>
+              <HamburgerMenuIcon />
+            </button>
+          </span>
+
+          <Link to="/" className="logo">
+            MyBlog
+          </Link>
+          <nav>
+            {username && (
+              <>
+                <Link to="/create">
+                  <button className="header-main-btn create-header-btn">
+                    Create Post
+                  </button>
                 </Link>
-                <Link to={`/profile/${userInfo?._id}`}>
-                  <i className="fa fa-user" aria-hidden="true"></i>
-                  Profile
+
+                <div className="dropdown" ref={dropdownNode}>
+                  <div
+                    className="dropdown-toggle"
+                    onClick={handleDropdownToggle}
+                  >
+                    <RoundProfilePicture
+                      size={"42px"}
+                      imageUrl={`/api/uploads/profilePicture/${userInfo?.profileImageURL}`}
+                    />
+                  </div>
+                  {isDropdownOpen && (
+                    <DropdownMenu
+                      options={options}
+                      onItemClick={handleOptionClick}
+                    />
+                  )}
+                </div>
+              </>
+            )}
+
+            {!username && (
+              <>
+                <Link to="/login">
+                  <button className="header-login-btn">Login</button>
                 </Link>
-                <Link to="/explore-topics">
-                  <i className="fa fa-hashtag" aria-hidden="true"></i>Topics
+                <Link to="/register">
+                  <button className="header-main-btn">Create Account</button>
                 </Link>
-                <Link to="/bookmarks/lists">
-                  <i className="fa fa-bookmark" aria-hidden="true"></i>Library
-                </Link>
-                <Link onClick={logout}>
-                  <i className="fa fa-sign-out" aria-hidden="true"></i>
-                  Logout
-                </Link>
-              </div>
-            </div>
-          </>
-        )}
-        {!username && (
-          <>
-            <Link to="/login">Login</Link>
-            <Link to="/register">Register</Link>
-          </>
-        )}
-      </nav>
-    </header>
+              </>
+            )}
+          </nav>
+        </div>
+      </header>
+
+      {isHamburgerMenuOpen && (
+        <HamburgerMenu setIsHamburgerMenuOpen={setIsHamburgerMenuOpen} />
+      )}
+    </>
   );
 }
 

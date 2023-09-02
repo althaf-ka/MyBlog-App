@@ -6,7 +6,7 @@ import {
   useState,
 } from "react";
 import "./ClapButton.css";
-import Clap from "../../assets/Clap";
+import { ClapIcon } from "../../assets";
 import axios from "../../../config/axios";
 import SignInOrUpModel from "../SignInOrUpModel/SignInOrUpModel";
 
@@ -118,7 +118,7 @@ const ClapButton = forwardRef(
             onAnimationEnd={() => setAnimation(0)}
             animation={animation}
           >
-            <Clap isClicked={isClicked} />
+            <ClapIcon isClicked={isClicked} />
           </button>
           <p className="display-clap-count">{totalClaps}</p>
         </div>
