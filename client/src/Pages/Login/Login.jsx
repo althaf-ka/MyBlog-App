@@ -6,9 +6,10 @@ import { UserContext } from "../../../Context/UserContext";
 import FormInput from "../../Components/Form/FormInput";
 import PasswordInput from "../../Components/Form/PasswordInput";
 import Button from "../../Components/Button/Button";
+import GoogleAuth from "../../Components/GoogleAuth/GoogleAuth";
 
 function Login() {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errMessage, setErrMessage] = useState("");
   const { userInfo, setUserInfo } = useContext(UserContext);
@@ -25,11 +26,11 @@ function Login() {
     event.preventDefault();
     axios.defaults.withCredentials = true;
     try {
-      const response = await axios.post("/users/login", { username, password });
+      const response = await axios.post("/users/login", { email, password });
       //checking if there user and also sending jwt token to store in cookie
-      if (response.data.username) {
-        const { _id, username, name } = response.data;
-        setUserInfo({ _id, username, name });
+      if (response.data) {
+        const { _id, email, name } = response.data;
+        setUserInfo({ _id, email, name });
         navigate("/");
       }
     } catch (err) {
@@ -46,11 +47,11 @@ function Login() {
         <FormInput
           id="email"
           label="Email"
-          value={username}
-          onChange={e => setUsername(e.target.value)}
+          value={email}
+          onChange={e => setEmail(e.target.value)}
           placeholder="Email"
           required={true}
-          // type="email"
+          type="email"
         />
 
         <PasswordInput
@@ -58,10 +59,21 @@ function Login() {
           value={password}
           onChange={e => setPassword(e.target.value)}
         />
+
         <div className="login-btn">
-          <Button label="Login" variant="secondary" />
+          <Button label="Login" variant="secondary" width="100%" />
         </div>
       </form>
+
+      <h3 className="or-google">OR</h3>
+
+      <div className="google-btn-auth">
+        <GoogleAuth
+          action={"login"}
+          setUserInfo={setUserInfo}
+          setErrMessage={setErrMessage}
+        />
+      </div>
     </div>
   );
 }

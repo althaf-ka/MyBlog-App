@@ -1,6 +1,6 @@
 import "./Button.css";
 
-function Button({ size, onClick, label }) {
+function Button({ size, onClick, label, width }) {
   const buttonStyles = {
     padding:
       size === "small"
@@ -9,6 +9,7 @@ function Button({ size, onClick, label }) {
         ? "12px 24px"
         : "8px 16px",
     color: "#fff",
+    width: width ? width : "70px",
   };
 
   return (

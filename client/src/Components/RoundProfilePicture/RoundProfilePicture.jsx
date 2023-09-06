@@ -25,7 +25,12 @@ function RoundProfilePicture({ size, imageUrl }) {
   };
 
   useEffect(() => {
-    setImgSrc(imageUrl);
+    // Check if the imageUrl is an external URL
+    if (imageUrl && imageUrl.startsWith("http")) {
+      setImgSrc(imageUrl);
+    } else {
+      setImgSrc(`/api/uploads/profilePicture/${imageUrl}`);
+    }
   }, [imageUrl]);
 
   return (

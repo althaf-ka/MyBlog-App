@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./index.css";
+import "./styles.css";
 import { EyeIcon } from "../../assets";
 
 function PasswordInput({ id, value, onChange }) {

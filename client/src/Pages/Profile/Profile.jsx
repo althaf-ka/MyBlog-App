@@ -48,7 +48,7 @@ function Profile() {
     return () => {
       controller.abort();
     };
-  }, [userId]);
+  }, [userId, userInfo]);
 
   const loadMore = async () => {
     try {
@@ -80,11 +80,10 @@ function Profile() {
           <div className="avatar-container">
             <RoundProfilePicture
               size={130}
-              imageUrl={`http://localhost:4000/uploads/profilePicture/${userDetails?.profileImageURL}`}
+              imageUrl={userDetails?.profileImageURL}
             />
           </div>
           <h2>{userDetails?.name}</h2>
-          <p>@ {userDetails?.username}</p>
         </div>
         <div className="profile-details-card">
           <p>{userDetails?.bio}</p>

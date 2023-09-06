@@ -18,23 +18,21 @@ function EditProfile() {
   const [name, setName] = useState("");
   const [file, setFile] = useState("");
   const [previewProfilePicture, setPreviewProfilePicture] = useState("");
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [bio, setBio] = useState("");
   const [socialLinks, setSocialLinks] = useState(socialLinkState);
-  const [errorMessage, setErrorMessage] = useState(false);
   const navigate = useNavigate();
   const { userId } = useParams();
 
   useEffect(() => {
     if (userDetails) {
-      setUsername(userDetails.username);
       setName(userDetails.name);
+      setEmail(userDetails.email);
       setBio(userDetails.bio);
       setPreviewProfilePicture(
         `http://localhost:4000/uploads/profilePicture/${userDetails.profileImageURL}`
       );
       setSocialLinks(userDetails.socialLinks);
-      setErrorMessage(false);
     } else {
       const controller = new AbortController();
       const fetchUserDetails = async () => {
@@ -42,14 +40,13 @@ function EditProfile() {
           const response = await axios.get(`/users/profile/${userId}`, {
             signal: controller.signal,
           });
-          setUsername(response.data.username);
           setName(response.data.name);
+          setEmail(response.data.email);
           setBio(response.data.bio);
           setPreviewProfilePicture(
             `http://localhost:4000/uploads/profilePicture/${response.data.profileImageURL}`
           );
           setSocialLinks(response.data.socialLinks);
-          setErrorMessage(false);
         } catch (err) {
           console.log(err);
         }
@@ -86,10 +83,7 @@ function EditProfile() {
   };
 
   function capitalizeFirstLetter(string) {
-    return string
-      .split(" ")
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
+    return string.charAt(0).toUpperCase() + string.slice(1);
   }
 
   const handleSubmit = event => {
@@ -97,7 +91,6 @@ function EditProfile() {
     const data = new FormData();
     data.set("id", userDetails._id);
     data.set("name", name);
-    data.set("username", username);
     data.set("bio", bio);
     data.set("socialLinks", JSON.stringify(socialLinks));
     if (file) {
@@ -112,18 +105,12 @@ function EditProfile() {
         navigate(0); //to reload the page and change the header
       })
       .catch(err => {
-        if (err.response.status === 409) {
-          setErrorMessage(true);
-          return;
-        }
-        setErrorMessage(false);
+        console.log(err);
       });
   };
 
-  const MAX_NAME_LENGTH = 20;
-  const MAX_USERNAME_LENGTH = 20;
+  const MAX_NAME_LENGTH = 25;
   const MAX_BIO_LENGTH = 140;
-  const USERNAME_REGEX = /^[a-zA-Z0-9_]+$/;
 
   return (
     <div className="edit-profile-container">
@@ -137,13 +124,14 @@ function EditProfile() {
           />
         )}
 
+        <FormInput label="Email" id="email" value={email} />
+
         <FormInput
           label="Name"
           placeholder="Name"
           id="name"
           required={true}
           value={name}
-          moreInfo="Max 20 Characters"
           maxLength={MAX_NAME_LENGTH}
           onChange={event => setName(capitalizeFirstLetter(event.target.value))}
         />
@@ -152,25 +140,6 @@ function EditProfile() {
           label={"Profile Picture"}
           id="profile"
           onChange={handleProfilePictureChange}
-        />
-
-        {errorMessage && (
-          <p className="error-message-profile">Username has already taken</p>
-        )}
-        <FormInput
-          label="Username"
-          id="username"
-          placeholder="Username"
-          required={true}
-          value={username}
-          moreInfo="Please use only letters, numbers, and underscores."
-          maxLength={MAX_USERNAME_LENGTH}
-          onChange={event => {
-            const { value } = event.target;
-            if (USERNAME_REGEX.test(value) || value === "") {
-              setUsername(value);
-            }
-          }}
         />
 
         <div className="bio-input">

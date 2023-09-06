@@ -4,27 +4,27 @@ import { db } from "../db/connection.js";
 import createError from "../utils/createError.js";
 import { ObjectId } from "mongodb";
 
-const registerUser = (username, password) => {
+const registerUser = (name, email, password) => {
   return new Promise(async (resolve, reject) => {
     try {
       password = await bcrypt.hash(password, 5);
-      await db
-        .collection(collection.USERS_COLLECTION)
-        .createIndex({ username: 1 }, { unique: true });
-      const newUsr = await db
-        .collection(collection.USERS_COLLECTION)
-        .insertOne({
-          username,
-          password,
-        });
-
-      resolve({
-        message: "Successfully Registered",
-        newUserId: newUsr.insertedId,
+      await db.collection(collection.USERS_COLLECTION).createIndex(
+        { email: 1 },
+        {
+          unique: true,
+          partialFilterExpression: { email: { $exists: true } },
+        }
+      );
+      await db.collection(collection.USERS_COLLECTION).insertOne({
+        name,
+        email,
+        password,
       });
+
+      resolve({ message: "Successfully Registered" });
     } catch (error) {
       if (error.code === 11000) {
-        // Handle duplicate username error
+        // Handle duplicate Email  error
         reject(createError(409, "This User Already Exists"));
       } else {
         reject(createError(404, "Registration Failed !"));
@@ -33,17 +33,28 @@ const registerUser = (username, password) => {
   });
 };
 
-const loginUser = (username, password) => {
+const loginUser = (email, password) => {
   return new Promise(async (resolve, reject) => {
     try {
       let user = await db
         .collection(collection.USERS_COLLECTION)
-        .findOne({ username: username });
+        .findOne({ email: email });
+
+      if (user && user.googleUserId) {
+        reject(
+          createError(
+            403,
+            "Cannot Login with Google email. Use Google sign-in."
+          )
+        );
+        return;
+      }
 
       if (user) {
         bcrypt.compare(password, user.password).then(status => {
           if (status) {
-            resolve(user); //Login Sucessfully
+            const { password, ...userWithoutPassword } = user;
+            resolve(userWithoutPassword); //Login Sucessfully
           } else {
             reject(createError(401, "The Password you entered is incorrect"));
           }
@@ -101,24 +112,10 @@ const getAuthorDetails = userId => {
 const addAuthorDetails = (profileDetails, profileImageURL) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const { name, username, bio, socialLinks, id } = profileDetails;
-
-      // Check if the username already exists for a different user($ne:)=>To exculde currrent Username
-      const existingUsername = await db
-        .collection(collection.USERS_COLLECTION)
-        .findOne({ username, _id: { $ne: new ObjectId(id) } });
-
-      if (existingUsername) {
-        throw {
-          status: 409,
-          message:
-            "Username already exists. Please choose a different username.",
-        };
-      }
+      const { name, bio, socialLinks, id } = profileDetails;
 
       const updatefield = {
         name: name,
-        username: username,
         bio: bio,
         socialLinks: JSON.parse(socialLinks),
       };
@@ -142,10 +139,81 @@ const addAuthorDetails = (profileDetails, profileImageURL) => {
   });
 };
 
+const registerGoogleUser = payload => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const { googleUserId, userEmail, userName, profileLink } = payload;
+
+      if (!googleUserId) {
+        reject(createError(400, "Error in by Loging by Google"));
+        return;
+      }
+
+      await db.collection(collection.USERS_COLLECTION).createIndex(
+        { googleUserId: 1 },
+        {
+          unique: true,
+          partialFilterExpression: { googleUserId: { $exists: true } },
+        }
+      );
+
+      await db.collection(collection.USERS_COLLECTION).insertOne({
+        googleUserId: googleUserId,
+        name: userName,
+        email: userEmail,
+        profileImageURL: profileLink || null,
+      });
+
+      resolve({ message: "Successfully Registered" });
+    } catch (err) {
+      console.log(err);
+      if (err.code === 11000) {
+        // Handle duplicate Email error
+        reject(createError(409, "Your account already exists"));
+      } else {
+        reject(createError(404, "Registration Failed !"));
+      }
+    }
+  });
+};
+
+const loginGoogleUser = payload => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const { googleUserId: payloadGoogleUserId, userEmail } = payload;
+
+      const user = await db
+        .collection(collection.USERS_COLLECTION)
+        .findOne({ googleUserId: payloadGoogleUserId });
+
+      if (!user) {
+        reject(
+          createError(
+            404,
+            "Sorry, we couldn't find the user you are looking for. Please register for an account."
+          )
+        );
+      }
+
+      if (user.email !== userEmail) {
+        reject(createError(401, "Google Login Failed"));
+      }
+
+      const { googleUserId, ...userwithoutId } = user;
+      resolve(userwithoutId);
+    } catch (err) {
+      console.log(err);
+      reject(createError(500, "Error Occured During Login"));
+    }
+  });
+};
+
 export default {
   registerUser,
   loginUser,
   getUserDetail,
   getAuthorDetails,
   addAuthorDetails,
+  registerGoogleUser,
+  loginGoogleUser,
 };

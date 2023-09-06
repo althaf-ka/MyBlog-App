@@ -6,7 +6,6 @@
 
 .login-btn {
   display: flex;
-  justify-content: flex-end;
 }
 
 form.login h1 {
@@ -17,6 +16,18 @@ form.login h1 {
 .error-login {
   color: red;
   text-align: center;
+}
+
+.google-btn-auth {
+  display: flex;
+  justify-content: center;
+}
+
+.or-google {
+  text-align: center;
+  font-size: 1rem;
+  opacity: 90%;
+  font-weight: 600;
 }
 
 @media (max-width: 768px) {

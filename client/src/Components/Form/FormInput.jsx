@@ -1,4 +1,4 @@
-import "./index.css";
+import "./styles.css";
 
 function FormInput(props) {
   const {
@@ -34,6 +34,7 @@ function FormInput(props) {
           placeholder={placeholder}
           onChange={onChange}
           {...(maxLength && { maxLength })}
+          {...(!onChange && { disabled: true })}
         />
         {maxLength && (
           <div className="char-count">

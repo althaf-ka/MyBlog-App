@@ -47,4 +47,7 @@
     padding-left: 5%;
     font-weight: 400;
   }
+  .view-bookmark-posts-header {
+    margin-top: -15px;
+  }
 }

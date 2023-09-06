@@ -1,5 +1,4 @@
 import topicService from "../services/topicService.js";
-import createError from "../utils/createError.js";
 
 export const allTopicSuggestions = (req, res, next) => {
   topicService

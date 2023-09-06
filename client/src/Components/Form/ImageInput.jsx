@@ -1,4 +1,4 @@
-import "./index.css";
+import "./styles.css";
 
 function ImageInput({ label, id, moreInfo, onChange }) {
   return (

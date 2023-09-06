@@ -63,7 +63,7 @@ function Header() {
     { name: "Log Out", path: false },
   ];
 
-  const username = userInfo?.username;
+  const email = userInfo?.email;
 
   return (
     <>
@@ -79,7 +79,7 @@ function Header() {
             MyBlog
           </Link>
           <nav>
-            {username && (
+            {email && (
               <>
                 <Link to="/create">
                   <button className="header-main-btn create-header-btn">
@@ -94,7 +94,7 @@ function Header() {
                   >
                     <RoundProfilePicture
                       size={"42px"}
-                      imageUrl={`/api/uploads/profilePicture/${userInfo?.profileImageURL}`}
+                      imageUrl={userInfo?.profileImageURL}
                     />
                   </div>
                   {isDropdownOpen && (
@@ -107,7 +107,7 @@ function Header() {
               </>
             )}
 
-            {!username && (
+            {!email && (
               <>
                 <Link to="/login">
                   <button className="header-login-btn">Login</button>
