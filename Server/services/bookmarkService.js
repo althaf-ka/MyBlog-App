@@ -59,7 +59,7 @@ const addBookmarkList = ({ currentUserId, bookmarkListName, postId }) => {
             "bookmarks.name": bookmarkListName,
           },
           {
-            $push: {
+            $addToSet: {
               "bookmarks.$.postId": postId,
             },
           }

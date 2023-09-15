@@ -13,3 +13,16 @@ export const verifyToken = (req, res, next) => {
     next();
   });
 };
+
+export const isLoggedIn = (req, res, next) => {
+  const { token } = req?.cookies;
+
+  if (!token) return next();
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) return next();
+
+    req.user = user;
+    next();
+  });
+};

@@ -3,6 +3,7 @@ import createError from "../utils/createError.js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import { verifyToken } from "../middleware/authMiddleware.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -77,16 +78,25 @@ export const editPost = (req, res, next) => {
     });
 };
 
-export const getAllPost = (req, res, next) => {
-  //query for infinte scrolling
-  postService
-    .getAllPost(req.query.skip)
-    .then(blogPosts => {
-      res.json(blogPosts);
-    })
-    .catch(err => {
-      next(err);
-    });
+export const getAllPost = async (req, res, next) => {
+  try {
+    const skipValue = req.query.skip;
+    const userDetails = req.user || false;
+
+    let blogPosts;
+
+    if (userDetails) {
+      const { _id: userId } = userDetails;
+      blogPosts = await postService.getAllPostWithBookmarks(userId, skipValue);
+    } else {
+      blogPosts = await postService.getAllPost(skipValue);
+    }
+
+    res.json(blogPosts);
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
 };
 
 export const getPostById = (req, res, next) => {

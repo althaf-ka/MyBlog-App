@@ -43,6 +43,8 @@ div.posts-container {
 .right-content {
   display: flex;
   align-items: center;
+  color: black;
+  font-size: 0.98rem;
 }
 
 .author-name-post {

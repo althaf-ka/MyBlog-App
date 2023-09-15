@@ -162,12 +162,20 @@ div .updatedInfo time {
   }
 }
 
+.options-border {
+  border-top: solid 1px #f2f2f2;
+  border-bottom: solid 1px #f2f2f2;
+  border-top-color: rgb(52, 56, 58);
+  border-bottom-color: rgb(52, 56, 58);
+  margin-top: 30px;
+}
+
 .main-blog-options-container {
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
   gap: 20px;
-  max-width: 60%;
+  max-width: 65%;
   margin: 2px auto;
   user-select: none;
 }

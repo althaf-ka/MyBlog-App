@@ -75,7 +75,7 @@ function TopicDetails() {
           endMessage={<EndMessage info={true} />}
         >
           {postDetails?.map((post, index) => (
-            <Post key={index} {...post} />
+            <Post key={index} {...post} hideBookmark={true} />
           ))}
         </InfiniteScroll>
         <ScrollToTopButton />

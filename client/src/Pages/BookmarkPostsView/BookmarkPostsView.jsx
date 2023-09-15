@@ -99,7 +99,12 @@ function BookmarkPostsView() {
       <p>{posts?.storyCount} Stories</p>
       <div className="view-bookmark-posts-container">
         {posts.bookmarkedPosts?.map((post, index) => (
-          <Post key={index} {...post} isBookmarked={true} />
+          <Post
+            key={index}
+            {...post}
+            isBookmarked={true}
+            currentUserId={userInfo?._id}
+          />
         ))}
       </div>
     </div>

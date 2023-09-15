@@ -103,6 +103,82 @@ const getAllPost = skip => {
   });
 };
 
+const getAllPostWithBookmarks = (userId, skip) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const blogs = await db
+        .collection(collection.POSTS_COLLECTION)
+        .aggregate([
+          {
+            $lookup: {
+              from: collection.USERS_COLLECTION,
+              localField: "userId",
+              foreignField: "_id",
+              as: "author",
+            },
+          },
+          {
+            $unwind: "$author",
+          },
+          {
+            $sort: { createdAt: -1 },
+          },
+          {
+            $skip: parseInt(skip) || 0,
+          },
+          {
+            $limit: 15,
+          },
+          {
+            $lookup: {
+              from: collection.BOOKMARK_COLLECTION,
+              let: { postId: "$_id" },
+              pipeline: [
+                { $match: { userId: new ObjectId(userId) } },
+                {
+                  $project: {
+                    isBookmarked: {
+                      $anyElementTrue: {
+                        $map: {
+                          input: "$bookmarks.postId",
+                          as: "bookmarkId",
+                          in: { $in: ["$$postId", "$$bookmarkId"] },
+                        },
+                      },
+                    },
+                  },
+                },
+              ],
+              as: "bookmarks",
+            },
+          },
+          {
+            $project: {
+              _id: 1,
+              title: 1,
+              content: 1,
+              createdAt: 1,
+              coverImageURL: 1,
+              userId: 1,
+              author: "$author.name",
+              isBookmarked: { $arrayElemAt: ["$bookmarks.isBookmarked", 0] },
+            },
+          },
+        ])
+        .toArray();
+
+      resolve(blogs);
+    } catch (err) {
+      reject(
+        createError(
+          500,
+          "We apologize, but an error occurred while retrieving the blogs. Please try again later."
+        )
+      );
+    }
+  });
+};
+
 const getPostById = postId => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -290,6 +366,7 @@ const postsByAuthor = (userId, skip) => {
 export default {
   addPost,
   getAllPost,
+  getAllPostWithBookmarks,
   getPostById,
   updatePost,
   deletePostById,

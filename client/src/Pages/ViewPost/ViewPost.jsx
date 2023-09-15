@@ -71,6 +71,7 @@ function ViewPost() {
         <h1>{postInfo.title}</h1>
         <time>{format(new Date(postInfo.createdAt), "MMM d, yyyy HH:mm")}</time>
         <div className="author">{postInfo.author}</div>
+
         <div className="image">
           <img
             src={`/api/uploads/postImages/${postInfo.coverImageURL}`}
@@ -124,25 +125,27 @@ function ViewPost() {
               </Link>
             </div>
           )}
-          <div className="main-blog-options-container">
-            <ClapButton
-              ref={clapButtonRef}
-              currentUserId={userInfo?._id}
-              postId={id}
-              authorId={postInfo?.userId}
-              setIsUserClapped={setIsUserClapped}
-            />
+          <div className="options-border">
+            <div className="main-blog-options-container">
+              <ClapButton
+                ref={clapButtonRef}
+                currentUserId={userInfo?._id}
+                postId={id}
+                authorId={postInfo?.userId}
+                setIsUserClapped={setIsUserClapped}
+              />
 
-            <BookMark
-              currentUserId={userInfo?._id}
-              postId={id}
-              isBookmarked={postInfo?.hasBookmark}
-            />
+              <BookMark
+                currentUserId={userInfo?._id}
+                postId={id}
+                isBookmarked={postInfo?.hasBookmark}
+              />
 
-            <BlogOptions
-              onCancelClaps={handleCancelAllClaps}
-              isUserClapped={isUserClapped}
-            />
+              <BlogOptions
+                onCancelClaps={handleCancelAllClaps}
+                isUserClapped={isUserClapped}
+              />
+            </div>
           </div>
         </div>
       </div>

@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "./Post.css";
 import { format } from "date-fns";
 import { Link } from "react-router-dom";
 import Bookmark from "../BookMark/BookMark";
-import MoreOptions from "../MoreOptions/MoreOptions";
 
 function Post(props) {
   const {
@@ -15,9 +14,15 @@ function Post(props) {
     createdAt,
     userId,
     isBookmarked,
+    currentUserId = false,
+    hideBookmark = false,
   } = props;
 
   const [bookmarkStatus, setBookmarkStatus] = useState(isBookmarked);
+
+  useEffect(() => {
+    setBookmarkStatus(isBookmarked);
+  }, [isBookmarked]);
 
   //Convert html file into String from QuillEditor
   const parser = new DOMParser();
@@ -63,8 +68,13 @@ function Post(props) {
                 </time>
               </div>
               <div className="right-content">
-                <Bookmark isBookmarked={bookmarkStatus} />
-                {false && <MoreOptions />}
+                {!hideBookmark && (
+                  <Bookmark
+                    postId={_id}
+                    isBookmarked={bookmarkStatus}
+                    currentUserId={currentUserId}
+                  />
+                )}
               </div>
             </div>
           </div>

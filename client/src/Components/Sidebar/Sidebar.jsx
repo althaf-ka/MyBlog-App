@@ -99,7 +99,7 @@ function Sidebar({ handleClick }) {
               <TwitterIcon />
             </Link>
 
-            <Link to="https://github.com/althaf-ka" target="_blank">
+            <Link to="https://github.com/althaf-ka/MyBlog-App" target="_blank">
               <GithubIcon />
             </Link>
 

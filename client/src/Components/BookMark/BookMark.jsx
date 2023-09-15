@@ -119,16 +119,23 @@ function BookMark({ currentUserId, postId, isBookmarked }) {
       return;
     }
 
+    setShowModel(prevState => !prevState);
+
     if (!bookmarkDetailsFetched) {
       await getCurrentUserBookmarkDetails();
       setBookmarkDetailsFetched(true);
     }
-
-    setShowModel(prevState => !prevState);
   };
 
   const handleBookmarkNameChange = e => {
-    setBookmarkName(e.target.value);
+    const inputText = e.target.value;
+    const specialCharRegex = /^[a-zA-Z0-9\s-]*$/;
+
+    if (specialCharRegex.test(inputText)) {
+      setBookmarkName(inputText);
+    } else {
+      alert("Special characters other than hyphens are not allowed.");
+    }
   };
 
   const handleAddBookmark = () => {

@@ -1,5 +1,5 @@
 import express from "express";
-import { verifyToken } from "../middleware/authMiddleware.js";
+import { verifyToken, isLoggedIn } from "../middleware/authMiddleware.js";
 import {
   addPost,
   deletePostById,
@@ -12,7 +12,8 @@ import { postUpload } from "../utils/MulterUpload.js";
 
 const router = express.Router();
 
-router.get("/", getAllPost);
+router.get("/", isLoggedIn, getAllPost);
+
 router.get("/:id", getPostById);
 router.get("/author-posts/:userId", postsByAuthor);
 
