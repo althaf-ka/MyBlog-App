@@ -84,7 +84,7 @@ function Sidebar({ handleClick }) {
               </li>
             )}
             <li>
-              <Link className="nav-link" to="/">
+              <Link className="nav-link" to="/privacy">
                 <PrivacyPolicyIcon />
                 Privacy Policy
               </Link>
