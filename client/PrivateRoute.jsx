@@ -1,4 +1,4 @@
-import React, { useContext, useLayoutEffect } from "react";
+import { useContext, useLayoutEffect } from "react";
 import { UserContext } from "./Context/UserContext";
 import { useNavigate } from "react-router-dom";
 
@@ -8,10 +8,15 @@ function PrivateRoute({ children }) {
 
   useLayoutEffect(() => {
     if (!userInfo) {
-      navigate("/login");
+      navigate("/login", { replace: true });
     }
   }, [userInfo]);
-  return children;
+
+  if (userInfo && Object.keys(userInfo).length !== 0) {
+    return children;
+  }
+
+  return null;
 }
 
 export default PrivateRoute;

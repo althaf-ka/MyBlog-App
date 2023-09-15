@@ -1,0 +1,27 @@
+@import url("https://fonts.googleapis.com/css?family=Montserrat:700");
+
+.notfound-container {
+  height: 75vh;
+  font-family: "Montserrat", "sans-serif";
+  font-weight: bolder;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  user-select: none;
+}
+.notfound-container h1 {
+  margin-bottom: 0;
+}
+
+.notfound-container div {
+  text-decoration: underline;
+  color: #449a4a;
+  margin-top: 25px;
+}
+
+@media (max-width: 768px) {
+  .notfound-container h1 {
+    font-size: 1.8rem;
+  }
+}

@@ -16,6 +16,7 @@ import EditProfile from "./Pages/EditProfile/EditProfile";
 import BookmarkView from "./Pages/BookmarkView/BookmarkView";
 import BookmarkPostsView from "./Pages/BookmarkPostsView/BookmarkPostsView";
 import PrivacyPolicy from "./Pages/PrivacyPolicy/PrivacyPolicy";
+import NotFound from "./Pages/NotFound/NotFound";
 
 function App() {
   return (
@@ -73,7 +74,7 @@ function App() {
             }
           />
           <Route path="/privacy" element={<PrivacyPolicy />} />
-          <Route path="*" element={<p>There's nothing here: 404!</p>} />
+          <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
     </UserContextProvider>

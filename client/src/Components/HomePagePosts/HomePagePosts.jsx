@@ -51,7 +51,7 @@ function HomePagePosts() {
       >
         {posts.length > 0 &&
           posts.map(post => (
-            <Post key={post._id} {...post} currentUserId={userInfo._id} />
+            <Post key={post._id} {...post} currentUserId={userInfo?._id} />
           ))}
       </InfiniteScroll>
       <ScrollToTopButton />
