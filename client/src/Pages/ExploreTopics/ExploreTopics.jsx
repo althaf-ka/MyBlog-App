@@ -3,6 +3,7 @@ import "./ExploreTopics.css";
 import axios from "../../../config/axios";
 import { ReactSearchAutocomplete } from "react-search-autocomplete";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function ExploreTopics() {
   const [suggestions, setSuggestions] = useState([]);
@@ -28,7 +29,9 @@ function ExploreTopics() {
           controller.abort();
         };
       } catch (error) {
-        console.error(error);
+        if (!controller.signal.aborted) {
+          toast.error(error.response.data);
+        }
       }
     };
     fetchSuggestions();

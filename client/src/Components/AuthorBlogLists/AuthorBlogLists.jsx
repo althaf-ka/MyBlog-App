@@ -3,6 +3,7 @@ import "./AuthorBlogLists.css";
 import { format } from "date-fns";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "../../../config/axios";
+import { toast } from "react-toastify";
 
 function AuthorBlogLists(props) {
   const { _id, title, createdAt, coverImageURL, setPostDetails, isAuthor } =
@@ -20,12 +21,14 @@ function AuthorBlogLists(props) {
       const deleteBlog = await axios.delete(`/posts/delete/${_id}`, {
         withCredentials: true,
       });
-      console.log(deleteBlog);
+
+      toast.success(deleteBlog?.data);
+
       setPostDetails(prevDetails =>
         prevDetails.filter(post => post._id !== _id)
       );
     } catch (err) {
-      console.log(err);
+      toast.error(err.response?.data);
     }
     setShowConfirmation(false);
   };

@@ -10,6 +10,7 @@ import {
   LinkedinIcon,
   MailIcon,
 } from "../../assets";
+import { toast } from "react-toastify";
 
 const socialLinkState = { email: "", twitter: "", instagram: "", linkedin: "" };
 
@@ -86,7 +87,7 @@ function EditProfile() {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
 
-  const handleSubmit = event => {
+  const handleSubmit = async event => {
     event.preventDefault();
     const data = new FormData();
     data.set("id", userDetails._id);
@@ -94,19 +95,23 @@ function EditProfile() {
     data.set("bio", bio);
     data.set("socialLinks", JSON.stringify(socialLinks));
     if (file) {
-      console.log("accessed");
       data.set("file", file);
     }
 
-    axios
-      .put("/users/profile/details", data, { withCredentials: true })
-      .then(response => {
-        navigate("/");
-        navigate(0); //to reload the page and change the header
-      })
-      .catch(err => {
-        console.log(err);
-      });
+    try {
+      await toast.promise(
+        axios.put("/users/profile/details", data, { withCredentials: true }),
+        {
+          pending: "Updating profile...",
+          success: "Profile updated successfully!",
+          error: "Error updating profile. Please try again later.",
+        }
+      );
+      navigate("/");
+      navigate(0); // To reload the page and change the header
+    } catch (error) {
+      toast.error(error.response.data);
+    }
   };
 
   const MAX_NAME_LENGTH = 25;

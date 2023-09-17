@@ -7,6 +7,7 @@ import FormInput from "../../Components/Form/FormInput";
 import PasswordInput from "../../Components/Form/PasswordInput";
 import Button from "../../Components/Button/Button";
 import GoogleAuth from "../../Components/GoogleAuth/GoogleAuth";
+import { toast } from "react-toastify";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -36,6 +37,7 @@ function Login() {
     } catch (err) {
       //setting other login errors
       setErrMessage(err.response.data);
+      toast.error(err.response.data);
     }
   };
   return (

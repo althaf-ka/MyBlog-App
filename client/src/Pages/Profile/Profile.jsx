@@ -15,6 +15,7 @@ import {
   MailIcon,
 } from "../../assets";
 import RoundProfilePicture from "../../Components/RoundProfilePicture/RoundProfilePicture";
+import { toast } from "react-toastify";
 
 function Profile() {
   const { userId } = useParams();
@@ -39,7 +40,9 @@ function Profile() {
           setIsAuthor(true);
         }
       } catch (err) {
-        console.log(err);
+        if (!controller.signal.aborted) {
+          toast.error(err.response.data);
+        }
       }
     };
 

@@ -224,6 +224,14 @@ const getPostById = postId => {
         ])
         .toArray();
 
+      if (singleBlog.length === 0) {
+        reject(
+          createError(
+            500,
+            "An error occurred while retrieving the post details. Please try again later."
+          )
+        );
+      }
       resolve(singleBlog[0]);
     } catch (err) {
       reject(
@@ -343,6 +351,38 @@ const deletePostById = postId => {
   });
 };
 
+const deletePostReference = async (postId, userId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      // Delete applause by postId
+      await db
+        .collection(collection.APPLAUSE_COLLECTION)
+        .deleteOne({ postId: new ObjectId(postId) });
+
+      // Delete bookmarks by postId
+      await db.collection(collection.BOOKMARK_COLLECTION).updateMany(
+        {
+          userId: new ObjectId(userId),
+          "bookmarks.postId": new ObjectId(postId),
+        },
+        { $pullAll: { "bookmarks.$[].postId": [new ObjectId(postId)] } }
+      );
+
+      // Delete topics by postId
+      await db
+        .collection(collection.TOPICS_COLLECTION)
+        .updateMany(
+          { posts: new ObjectId(postId) },
+          { $pull: { posts: new ObjectId(postId) } }
+        );
+
+      resolve({ status: 200, message: "Post Reference Deleted " });
+    } catch (error) {
+      reject(createError(404, "Failed to Delete Post Reference"));
+    }
+  });
+};
+
 const postsByAuthor = (userId, skip) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -370,5 +410,6 @@ export default {
   getPostById,
   updatePost,
   deletePostById,
+  deletePostReference,
   postsByAuthor,
 };

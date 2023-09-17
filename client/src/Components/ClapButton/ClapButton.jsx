@@ -9,6 +9,7 @@ import "./ClapButton.css";
 import { ClapIcon } from "../../assets";
 import axios from "../../../config/axios";
 import SignInOrUpModel from "../SignInOrUpModel/SignInOrUpModel";
+import { toast } from "react-toastify";
 
 const ClapButton = forwardRef(
   ({ currentUserId, postId, authorId, setIsUserClapped }, ref) => {
@@ -34,6 +35,9 @@ const ClapButton = forwardRef(
             setIsClicked(true), setIsUserClapped(true);
         })
         .catch(err => {
+          if (!controller.signal.aborted) {
+            toast.error(err.response.data);
+          }
           if (err.response && err.response.status === 404) return;
         });
 
@@ -55,6 +59,7 @@ const ClapButton = forwardRef(
           withCredentials: true,
         });
       } catch (err) {
+        toast.error(err.response?.data);
         console.log(err);
       }
     };
@@ -96,6 +101,7 @@ const ClapButton = forwardRef(
           if (res.status === 200) return;
         })
         .catch(err => {
+          toast.error(err.response?.data);
           console.log(err);
         });
     };

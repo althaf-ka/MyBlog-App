@@ -7,6 +7,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import FormInput from "../../Components/Form/FormInput";
 import ImageInput from "../../Components/Form/ImageInput";
+import { toast } from "react-toastify";
 
 function EditPost() {
   const { id } = useParams();
@@ -61,33 +62,37 @@ function EditPost() {
     });
   }, []);
 
-  const updatePost = e => {
+  const updatePost = async e => {
     e.preventDefault();
     const data = new FormData();
     data.set("id", id);
     data.set("title", title);
     data.set("content", content);
-    removedTopics?.map(topic => data.append("removedTopics[]", topic)); //To make selected topic to Array if no change no data
+    removedTopics?.map(topic => data.append("removedTopics[]", topic)); // To make selected topic to Array if no change no data
     newTopics?.map(topic => data.append("newTopics[]", topic));
     topics?.map(topic => data.append("allTopics[]", topic));
     if (files?.[0]) {
       data.set("file", files?.[0]);
     }
 
-    axios
-      .put("/posts/edit", data, { withCredentials: true })
-      .then(response => {
-        console.log(response.data);
-        navigate("/");
-      })
-      .catch(error => {
-        if (error.response.status === 401) {
-          //jwt token not verified so login again
-          navigate("/login");
+    try {
+      await toast.promise(
+        axios.put("/posts/edit", data, { withCredentials: true }),
+        {
+          pending: "Updating post...",
+          success: "Post updated successfully!",
+          error: "Error updating post. Please try again later.",
         }
-        console.log(error);
-        navigate("/login");
-      });
+      );
+
+      navigate("/");
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        navigate("/login"); // JWT token not verified, so redirect to login
+      }
+      console.error(error);
+      navigate("/login");
+    }
   };
 
   const handleTopicChange = (event, topics) => {

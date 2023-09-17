@@ -8,6 +8,7 @@ import { ThreeDotsIcon } from "../../assets";
 import DropdownMenu from "../../Components/DropdownMenu/DropdownMenu";
 import useClickOutside from "../../Hooks/useClickOutside";
 import TailSpinLoader from "../../Components/Loaders/TailSpinLoader";
+import { toast } from "react-toastify";
 
 function BookmarkPostsView() {
   const { bookmarkName, userId } = useParams();
@@ -28,7 +29,9 @@ function BookmarkPostsView() {
 
         setPosts(bookmarkResponse.data);
       } catch (error) {
-        console.log(error);
+        if (!controller.signal.aborted) {
+          toast.error(error.response.data);
+        }
       }
     };
     fetchBookmarkPosts();
@@ -72,7 +75,7 @@ function BookmarkPostsView() {
             navigate(-1);
           }
         } catch (err) {
-          console.error("Error while deleting list:", err);
+          toast.error(err.response?.data);
         }
       }
     }

@@ -4,6 +4,7 @@ import axios from "../../../config/axios";
 import { UserContext } from "../../../Context/UserContext";
 import TailSpinLoader from "../../Components/Loaders/TailSpinLoader";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function BookmarkView() {
   const { userInfo } = useContext(UserContext);
@@ -24,7 +25,9 @@ function BookmarkView() {
         setBookmarkLists(bookmarkResponse.data);
         setIsLoading(false);
       } catch (err) {
-        console.log(err);
+        if (!controller.signal.aborted) {
+          toast.error(err.response.data);
+        }
       }
     };
 

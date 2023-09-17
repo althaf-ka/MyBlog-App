@@ -8,6 +8,7 @@ import DropdownMenu from "../DropdownMenu/DropdownMenu";
 import { HamburgerMenuIcon } from "../../assets";
 import HamburgerMenu from "../HamburgerMenu/HamburgerMenu";
 import useClickOutside from "../../Hooks/useClickOutside";
+import { toast } from "react-toastify";
 
 function Header() {
   const { userInfo, setUserInfo } = useContext(UserContext);
@@ -26,7 +27,6 @@ function Header() {
         setUserInfo(response.data);
       })
       .catch(err => {
-        console.log(err.message, "User Not Logged In");
         setUserInfo(null);
       });
   }, [userInfo?._id]);
@@ -42,7 +42,7 @@ function Header() {
   const logout = () => {
     axios.defaults.withCredentials = true;
     axios.post("/users/logout").then(response => {
-      console.log(response.data.message);
+      toast.success(response.data.message);
       setUserInfo(null);
       window.location.reload();
     });

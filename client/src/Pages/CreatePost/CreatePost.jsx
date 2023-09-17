@@ -7,6 +7,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import FormInput from "../../Components/Form/FormInput";
 import ImageInput from "../../Components/Form/ImageInput";
+import { toast } from "react-toastify";
 
 function CreatePost() {
   const [title, setTitle] = useState("");
@@ -29,28 +30,33 @@ function CreatePost() {
     });
   }, []);
 
-  const createNewPost = e => {
+  const createNewPost = async e => {
     e.preventDefault();
     const data = new FormData();
     data.set("title", title);
     data.set("content", content);
-    selectedTopicsArray.map(topic => data.append("topics[]", topic)); //To make selected topic to Array
+    selectedTopicsArray.map(topic => data.append("topics[]", topic)); // To make selected topic an array
 
     const file = files || null;
     data.set("file", file);
 
-    axios
-      .post("/posts/add", data, { withCredentials: true })
-      .then(response => {
-        console.log(response.data);
-        navigate("/");
-      })
-      .catch(error => {
-        console.log(error);
-        //jwt token not verified so login again
-        // console.log(error.response.data.message);
-        navigate("/login"); //HERE ERROR FIX NEEEDDED notification
-      });
+    try {
+      await toast.promise(
+        axios.post("/posts/add", data, { withCredentials: true }),
+        {
+          pending: "Creating post...",
+          success: "Post Uploaded successfully!",
+          error: "Error creating post. Please try again later.",
+        }
+      );
+
+      navigate("/");
+    } catch (error) {
+      toast.error(error.response.data);
+      if (error.response && error.response.status === 401) {
+        navigate("/login"); //jwt token not verified so login again
+      }
+    }
   };
 
   const handleTopicChange = (event, topics) => {
@@ -124,6 +130,7 @@ function CreatePost() {
           id="thumbnail"
           moreInfo="Image Only"
           onChange={handleImageChange}
+          required={true}
         />
 
         <label className="create-form-label">Tell your story..</label>

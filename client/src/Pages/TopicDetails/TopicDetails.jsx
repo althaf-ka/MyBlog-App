@@ -8,6 +8,7 @@ import EndMessage from "../../Components/EndMessage/EndMessage";
 import ScrollToTopButton from "../../Components/ScrollToTopButton/ScrollToTopButton";
 import Post from "../../Components/Post/Post";
 import { TopicIcon } from "../../assets";
+import { toast } from "react-toastify";
 
 function TopicDetails() {
   const { topicId } = useParams();
@@ -23,7 +24,7 @@ function TopicDetails() {
         const { title, total } = topicHeader.data;
         setHeader({ title, total });
       } catch (err) {
-        console.log(err);
+        toast.error(err.response.data);
       }
     };
     if (!mounted) {
@@ -47,7 +48,7 @@ function TopicDetails() {
         ]);
       }
     } catch (err) {
-      console.log(err);
+      toast.error(err.response.data);
     }
   };
 

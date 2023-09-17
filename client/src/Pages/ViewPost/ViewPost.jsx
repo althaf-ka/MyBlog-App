@@ -9,6 +9,7 @@ import ClapButton from "../../Components/ClapButton/ClapButton";
 import BlogOptions from "../../Components/BlogOptions/BlogOptions";
 import BookMark from "../../Components/BookMark/BookMark";
 import TailSpinLoader from "../../Components/Loaders/TailSpinLoader";
+import { toast } from "react-toastify";
 
 function ViewPost() {
   const { id } = useParams();
@@ -41,7 +42,9 @@ function ViewPost() {
           }));
         }
       } catch (error) {
-        console.log("Error:", error);
+        if (!controller.signal.aborted) {
+          toast.error(error.response.data);
+        }
       }
     };
     fetchData();
@@ -69,7 +72,11 @@ function ViewPost() {
     <>
       <div className="post-page">
         <h1>{postInfo.title}</h1>
-        <time>{format(new Date(postInfo.createdAt), "MMM d, yyyy HH:mm")}</time>
+        {postInfo?.createdAt && (
+          <time>
+            {format(new Date(postInfo.createdAt), "MMM d, yyyy HH:mm")}
+          </time>
+        )}
         <div className="author">{postInfo.author}</div>
 
         <div className="image">

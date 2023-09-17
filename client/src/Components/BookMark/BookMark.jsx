@@ -6,6 +6,7 @@ import RoatingLinesLoader from "../Loaders/RoatingLinesLoader";
 import TailSpinLoader from "../Loaders/TailSpinLoader";
 import SignInOrUpModel from "../SignInOrUpModel/SignInOrUpModel";
 import useClickOutside from "../../Hooks/useClickOutside";
+import { toast } from "react-toastify";
 
 function BookMark({ currentUserId, postId, isBookmarked }) {
   const [iconClicked, setIconClicked] = useState(false);
@@ -37,7 +38,7 @@ function BookMark({ currentUserId, postId, isBookmarked }) {
       if (response.data.status === 200) return true;
       else return false;
     } catch (err) {
-      console.log(err);
+      toast.error(err.response?.data);
       return false;
     }
   };
@@ -54,7 +55,7 @@ function BookMark({ currentUserId, postId, isBookmarked }) {
       if (response.data.status === 200) return true;
       else return false;
     } catch (err) {
-      console.log(err);
+      toast.error(err.response?.data);
       return false;
     }
   };
@@ -93,7 +94,7 @@ function BookMark({ currentUserId, postId, isBookmarked }) {
 
       setBookmarks(prevBookmarks);
     } catch (error) {
-      console.log(error);
+      toast.error(error.response?.data);
       await getCurrentUserBookmarkDetails(); //Retry req
     } finally {
       isRequestPending = false;
@@ -107,7 +108,7 @@ function BookMark({ currentUserId, postId, isBookmarked }) {
       setLoadingIndex(false);
       return result;
     } catch (err) {
-      console.log(err);
+      toast.error(err.response?.data);
       setLoadingIndex(false);
       return false;
     }
@@ -134,7 +135,7 @@ function BookMark({ currentUserId, postId, isBookmarked }) {
     if (specialCharRegex.test(inputText)) {
       setBookmarkName(inputText);
     } else {
-      alert("Special characters other than hyphens are not allowed.");
+      toast.warning("Special characters other than hyphens are not allowed.");
     }
   };
 
@@ -145,7 +146,7 @@ function BookMark({ currentUserId, postId, isBookmarked }) {
         bookmark => bookmark.name === trimBookmarkName
       );
       if (isBookmarkNameExists) {
-        alert("Bookmark name already exists");
+        toast.warning("Bookmark name already exists");
         return;
       }
 
@@ -191,7 +192,7 @@ function BookMark({ currentUserId, postId, isBookmarked }) {
       setLoadingIndex(null);
       updateBookmarkState(index, result ? toggleChecked : !toggleChecked);
     } catch (err) {
-      console.log(err);
+      toast.error(err.response?.data);
       setLoadingIndex(null);
       updateBookmarkState(index, !toggleChecked);
     }

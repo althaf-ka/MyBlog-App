@@ -7,6 +7,7 @@ import TailSpinLoader from "../Loaders/TailSpinLoader";
 import EndMessage from "../EndMessage/EndMessage";
 import ScrollToTopButton from "../ScrollToTopButton/ScrollToTopButton";
 import { UserContext } from "../../../Context/UserContext";
+import { toast } from "react-toastify";
 
 function HomePagePosts() {
   const [posts, setPosts] = useState([]);
@@ -34,7 +35,7 @@ function HomePagePosts() {
         setPosts(prevPosts => [...prevPosts, ...blogPosts.data]);
       }
     } catch (err) {
-      console.log(err);
+      toast.error(err.response?.data);
     }
   };
 

@@ -17,6 +17,8 @@ import BookmarkView from "./Pages/BookmarkView/BookmarkView";
 import BookmarkPostsView from "./Pages/BookmarkPostsView/BookmarkPostsView";
 import PrivacyPolicy from "./Pages/PrivacyPolicy/PrivacyPolicy";
 import NotFound from "./Pages/NotFound/NotFound";
+import { Slide, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   return (
@@ -77,6 +79,19 @@ function App() {
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
+      <ToastContainer
+        position="top-center"
+        autoClose="1800"
+        hideProgressBar
+        newestOnTop
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss={false}
+        pauseOnHover={false}
+        transition={Slide}
+        theme="colored"
+        closeButton={false}
+      />
     </UserContextProvider>
   );
 }

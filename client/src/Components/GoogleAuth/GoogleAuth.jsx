@@ -3,6 +3,7 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import "./GoogleAuth.css";
 import axios from "../../../config/axios";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function GoogleAuth({ action, setUserInfo, setErrMessage }) {
   const navigate = useNavigate();
@@ -33,11 +34,12 @@ function GoogleAuth({ action, setUserInfo, setErrMessage }) {
     } catch (err) {
       console.log(err);
       setErrMessage(err.response.data);
+      toast.error(err.response.data);
     }
   };
 
   const handleGoogleError = () => {
-    alert("Error in Google Login");
+    toast.error("Error in Google Login");
   };
 
   return (

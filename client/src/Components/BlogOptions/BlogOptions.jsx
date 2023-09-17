@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import "./BlogOptions.css";
 import { ThreeDotsIcon } from "../../assets";
 import useClickOutside from "../../Hooks/useClickOutside";
+import { toast } from "react-toastify";
 
 function BlogOptions({ onCancelClaps, isUserClapped }) {
   const [menuVisible, setMenuVisible] = useState(false);
@@ -22,10 +23,11 @@ function BlogOptions({ onCancelClaps, isUserClapped }) {
   const copyToClipboard = async () => {
     try {
       await navigator.clipboard.writeText(window.location.href);
-      console.log("Text copied to clipboard successfully!");
+      toast.success("Link copied to clipboard successfully!");
+
       setMenuVisible(false);
     } catch (error) {
-      console.log("Failed to copy text to clipboard:", error);
+      toast.error("Failed to copy Link to clipboard");
     }
   };
 

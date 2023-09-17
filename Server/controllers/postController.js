@@ -129,7 +129,10 @@ export const deletePostById = async (req, res, next) => {
       const uploadDir = path.resolve(__dirname, "..", "uploads", "postImages");
       const filePath = path.join(uploadDir, currentPostDetails.coverImageURL);
       await fs.promises.unlink(filePath);
+
+      await postService.deletePostReference(postId, user._id);
     }
+
     res.status(deleteResponse.status).json(deleteResponse.message);
   } catch (err) {
     next(err);

@@ -1,6 +1,6 @@
 import "./styles.css";
 
-function ImageInput({ label, id, moreInfo, onChange }) {
+function ImageInput({ label, id, moreInfo, onChange, required = false }) {
   return (
     <div className="form-group">
       <label htmlFor={id} className="image-input-label">
@@ -15,6 +15,7 @@ function ImageInput({ label, id, moreInfo, onChange }) {
         className="image-input-box"
         accept="image/*"
         onChange={onChange}
+        {...(required && { required: true })}
       />
     </div>
   );

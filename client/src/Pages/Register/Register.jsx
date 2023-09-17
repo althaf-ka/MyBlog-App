@@ -6,6 +6,7 @@ import FormInput from "../../Components/Form/FormInput";
 import PasswordInput from "../../Components/Form/PasswordInput";
 import Button from "../../Components/Button/Button";
 import GoogleAuth from "../../Components/GoogleAuth/GoogleAuth";
+import { toast } from "react-toastify";
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -27,7 +28,9 @@ function Register() {
       })
       .catch(err => {
         console.log(err, "err");
-        if (err.response) setErrMessage(err.response.data);
+
+        if (err.response)
+          setErrMessage(err.response.data), toast.error(err.response.data);
       });
   };
 
