@@ -12,7 +12,7 @@ function PasswordInput({ id, value, onChange }) {
   return (
     <div className="form-group">
       <label className="input-box-label">Password</label>
-      <div className="input-container">
+      <div className="input-container pass-wrap">
         <input
           onChange={onChange}
           type={showPassword ? "text" : "password"}

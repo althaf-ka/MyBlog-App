@@ -80,6 +80,8 @@ div.post-page a.edit-btn {
   border-radius: 5px;
   display: inline-flex;
   align-items: center;
+  padding: 10px 20px;
+  border: none;
   gap: 5px;
   text-decoration: none;
   transition: ease-out background-color 0.3s;
@@ -180,11 +182,11 @@ div .updatedInfo time {
   user-select: none;
 }
 
-.single-post-loader {
+.center-loader {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 60vh;
+  min-height: 65vh;
 }
 
 @media (max-width: 500px) {
@@ -199,7 +201,7 @@ div .updatedInfo time {
   }
 
   div.post-page > h1:first-child {
-    font-size: 25px;
+    font-size: 26px;
     margin: 8px 0 12px;
     padding-bottom: 5px;
   }

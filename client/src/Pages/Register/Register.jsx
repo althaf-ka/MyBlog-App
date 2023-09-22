@@ -23,7 +23,7 @@ function Register() {
     axios
       .post("/users/register", { formData })
       .then(response => {
-        alert("Successfully Signed Up");
+        toast.success("Successfully Signed Up");
         navigate("/login");
       })
       .catch(err => {
@@ -78,7 +78,7 @@ function Register() {
         />
 
         <div className="register-btn">
-          <Button label="Register" variant="secondary" width="100%" />
+          <Button label="Register" width="100%" size={"large"} />
         </div>
       </form>
 

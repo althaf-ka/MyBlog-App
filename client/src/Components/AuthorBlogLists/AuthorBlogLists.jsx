@@ -6,8 +6,15 @@ import axios from "../../../config/axios";
 import { toast } from "react-toastify";
 
 function AuthorBlogLists(props) {
-  const { _id, title, createdAt, coverImageURL, setPostDetails, isAuthor } =
-    props;
+  const {
+    _id,
+    title,
+    createdAt,
+    coverImageURL,
+    setPostDetails,
+    isAuthor,
+    updateTotalBlogsCount,
+  } = props;
   const navigate = useNavigate();
   const [showConfirmation, setShowConfirmation] = useState(false);
 
@@ -23,6 +30,7 @@ function AuthorBlogLists(props) {
       });
 
       toast.success(deleteBlog?.data);
+      await updateTotalBlogsCount();
 
       setPostDetails(prevDetails =>
         prevDetails.filter(post => post._id !== _id)
@@ -78,7 +86,7 @@ function AuthorBlogLists(props) {
         </div>
         <div className="author-blogs-image">
           <img
-            src={`http://localhost:4000/uploads/postImages/${coverImageURL}`}
+            src={`/api/uploads/postImages/${coverImageURL}`}
             alt="Post Image"
           />
         </div>

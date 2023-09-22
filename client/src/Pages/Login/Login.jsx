@@ -63,7 +63,7 @@ function Login() {
         />
 
         <div className="login-btn">
-          <Button label="Login" variant="secondary" width="100%" />
+          <Button label="Login" width="100%" size={"large"} />
         </div>
       </form>
 

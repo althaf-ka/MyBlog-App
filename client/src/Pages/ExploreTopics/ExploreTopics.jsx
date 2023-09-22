@@ -23,6 +23,7 @@ function ExploreTopics() {
           id: suggestion._id,
           name: suggestion.title,
         }));
+
         setSuggestions(suggestionTitles);
 
         return () => {

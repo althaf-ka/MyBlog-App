@@ -14,7 +14,9 @@ function SignInOrUpModel({ message, isVisible }) {
         <h3 className="signin-up-modal-title">
           Create an account to {message}.
         </h3>
-        <button className="register-mail-modal-button">Register Now</button>
+        <Link to={"/register"}>
+          <button className="register-mail-modal-button">Register Now</button>
+        </Link>
         <p className="signin-up-modal-text">
           Already have an account?{" "}
           <Link to={"/login"}>

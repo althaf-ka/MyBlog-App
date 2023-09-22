@@ -21,9 +21,10 @@ function Profile() {
   const { userId } = useParams();
   const [userDetails, setUserDetails] = useState(null);
   const [postDetails, setPostDetails] = useState([]);
-  const [hasMore, setHasMore] = useState(true);
+  const [hasMore, setHasMore] = useState(false);
   const [isAuthor, setIsAuthor] = useState(false);
   const { userInfo } = useContext(UserContext);
+  let mounted = false;
 
   useEffect(() => {
     const controller = new AbortController();
@@ -34,41 +35,59 @@ function Profile() {
           signal: controller.signal,
         });
         setUserDetails(response.data);
-        await loadMore(); // To load first initial posts
 
         if (userInfo?._id === response.data?._id) {
           setIsAuthor(true);
         }
       } catch (err) {
         if (!controller.signal.aborted) {
-          toast.error(err.response.data);
+          toast.error(err.response?.data);
         }
       }
     };
+
+    if (!mounted) {
+      loadMore();
+      mounted = true;
+      setHasMore(true);
+    }
 
     fetchUserDetails();
 
     return () => {
       controller.abort();
     };
-  }, [userId, userInfo]);
+  }, [userId, userInfo, userDetails?._id]);
 
   const loadMore = async () => {
     try {
-      const authorBlogs = await axios.get(
+      const { data: authorBlogs } = await axios.get(
         `/posts/author-posts/${userId}/?skip=${postDetails.length}`
       );
-      if (authorBlogs.data.length === 0) {
+
+      if (authorBlogs.length === 0) {
         setHasMore(false);
       } else {
-        setPostDetails(prevPostDetails => [
-          ...prevPostDetails,
-          ...authorBlogs.data,
-        ]);
+        setPostDetails(prevPostDetails =>
+          postDetails?.length === 0
+            ? authorBlogs
+            : [...prevPostDetails, ...authorBlogs]
+        );
+      }
+
+      if (authorBlogs.length < 15) {
+        setHasMore(false);
       }
     } catch (err) {
       console.log(err);
     }
+  };
+
+  const updateTotalBlogsCount = () => {
+    setUserDetails(prevUserDetails => ({
+      ...prevUserDetails,
+      totalBlogs: prevUserDetails?.totalBlogs - 1,
+    }));
   };
 
   return (
@@ -151,6 +170,7 @@ function Profile() {
                 {...post}
                 setPostDetails={setPostDetails}
                 isAuthor={isAuthor}
+                updateTotalBlogsCount={updateTotalBlogsCount}
               />
             ))}
           </InfiniteScroll>

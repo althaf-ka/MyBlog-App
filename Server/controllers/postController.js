@@ -3,7 +3,6 @@ import createError from "../utils/createError.js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { verifyToken } from "../middleware/authMiddleware.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 

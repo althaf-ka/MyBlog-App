@@ -22,7 +22,7 @@
 @media (max-width: 768px) {
   .home-layout-container {
     grid-template-columns: 100%;
-    padding: 0;
+    padding: 0 5px;
   }
   .home-layout-container .sidebar-layout-container {
     display: none;

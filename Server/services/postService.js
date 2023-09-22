@@ -324,10 +324,10 @@ const updatePost = (postId, blogDetails, coverImageURL) => {
     } catch (error) {
       reject(createError(500, "Updating Post Failed. Please try again later."));
     } finally {
-      // Delete topics with total 0
+      // Delete topics docs without posts
       await db
         .collection(collection.TOPICS_COLLECTION)
-        .deleteMany({ total: 0 });
+        .deleteMany({ posts: { $size: 0 } });
     }
   });
 };
@@ -373,8 +373,13 @@ const deletePostReference = async (postId, userId) => {
         .collection(collection.TOPICS_COLLECTION)
         .updateMany(
           { posts: new ObjectId(postId) },
-          { $pull: { posts: new ObjectId(postId) } }
+          { $pull: { posts: new ObjectId(postId) }, $inc: { total: -1 } }
         );
+
+      // Delete topics docs without posts
+      await db
+        .collection(collection.TOPICS_COLLECTION)
+        .deleteMany({ posts: { $size: 0 } });
 
       resolve({ status: 200, message: "Post Reference Deleted " });
     } catch (error) {

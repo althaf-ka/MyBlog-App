@@ -15,7 +15,7 @@ function GoogleAuth({ action, setUserInfo, setErrMessage }) {
           credentialResponse
         );
         if (response.status === 200) {
-          alert("Successfully Signed Up");
+          toast.success("Successfully Signed Up");
           navigate("/login");
         }
       } else if (action === "login") {

@@ -6,7 +6,7 @@ function Button({ size, onClick, label, width }) {
       size === "small"
         ? "4px 8px"
         : size === "large"
-        ? "12px 24px"
+        ? "10px 24px"
         : "8px 16px",
     color: "#fff",
     width: width ? width : "70px",

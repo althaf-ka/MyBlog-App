@@ -55,7 +55,7 @@ function ViewPost() {
   }, [userInfo?._id]);
 
   if (!postInfo)
-    return <TailSpinLoader size={70} wrapperClass="single-post-loader" />;
+    return <TailSpinLoader size={70} wrapperClass="center-loader" />;
 
   const handleAuthorClick = () => {
     navigate(`/profile/${postInfo.userId}`);

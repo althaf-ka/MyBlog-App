@@ -53,9 +53,13 @@
 }
 
 /* PASSWORD INPUT */
+.pass-wrap {
+  position: relative;
+}
+
 .password-toggle {
   position: absolute;
-  top: 34%;
+  top: 33%;
   right: 10px;
   transform: translateY(-50%);
   cursor: pointer;
