@@ -26,13 +26,17 @@ const allTopicSuggestions = () => {
 
 const totalBlogsInTopic = topicId => {
   return new Promise(async (resolve, reject) => {
-    const TotalTopicBlogs = await db
-      .collection(collection.TOPICS_COLLECTION)
-      .findOne(
-        { _id: new ObjectId(topicId) },
-        { projection: { _id: 0, posts: 0 } }
-      );
-    resolve(TotalTopicBlogs);
+    try {
+      const TotalTopicBlogs = await db
+        .collection(collection.TOPICS_COLLECTION)
+        .findOne(
+          { _id: new ObjectId(topicId) },
+          { projection: { _id: 0, posts: 0 } }
+        );
+      resolve(TotalTopicBlogs);
+    } catch (err) {
+      reject(createError(404, `Topics Fetching Error`));
+    }
   });
 };
 

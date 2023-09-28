@@ -1,5 +1,5 @@
 import "./EditPost.css";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "../../../config/axios";
 import { useNavigate, useParams } from "react-router-dom";
 import EditorQuill from "../../Components/EditorQuill/EditorQuill";
@@ -8,6 +8,7 @@ import TextField from "@mui/material/TextField";
 import FormInput from "../../Components/Form/FormInput";
 import ImageInput from "../../Components/Form/ImageInput";
 import { toast } from "react-toastify";
+import { PostContext } from "../../../Context/PostContext";
 
 function EditPost() {
   const { id } = useParams();
@@ -36,6 +37,7 @@ function EditPost() {
     newTopics,
     topicErrMsg,
   } = state;
+  const { reFetchPosts } = useContext(PostContext);
 
   const navigate = useNavigate();
   const MAX_TITLE_LENGTH = 130;
@@ -76,7 +78,7 @@ function EditPost() {
     }
 
     try {
-      await toast.promise(
+      const response = await toast.promise(
         axios.put("/posts/edit", data, { withCredentials: true }),
         {
           pending: "Updating post...",
@@ -85,7 +87,10 @@ function EditPost() {
         }
       );
 
-      navigate("/");
+      if (response.statusText === "OK") {
+        reFetchPosts();
+        navigate("/");
+      }
     } catch (error) {
       if (error.response && error.response.status === 401) {
         navigate("/login"); // JWT token not verified, so redirect to login

@@ -3,7 +3,7 @@ import { MongoClient } from "mongodb";
 let db = null;
 
 export const connect = async done => {
-  const url = "mongodb://0.0.0.0:27017";
+  const url = process.env.MONGO_DB_URL;
 
   const dbName = "myBlogDB";
 

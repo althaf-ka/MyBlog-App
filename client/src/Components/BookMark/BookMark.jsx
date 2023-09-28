@@ -1,12 +1,13 @@
 import "./BookMark.css";
 import { BookmarkIcon } from "../../assets";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import axios from "../../../config/axios";
 import RoatingLinesLoader from "../Loaders/RoatingLinesLoader";
 import TailSpinLoader from "../Loaders/TailSpinLoader";
 import SignInOrUpModel from "../SignInOrUpModel/SignInOrUpModel";
 import useClickOutside from "../../Hooks/useClickOutside";
 import { toast } from "react-toastify";
+import { PostContext } from "../../../Context/PostContext";
 
 function BookMark({ currentUserId, postId, isBookmarked }) {
   const [iconClicked, setIconClicked] = useState(false);
@@ -16,6 +17,7 @@ function BookMark({ currentUserId, postId, isBookmarked }) {
   const [loadingIndex, setLoadingIndex] = useState(null);
   const [showLoginRequired, setShowLoginRequired] = useState(false);
   const [bookmarkDetailsFetched, setBookmarkDetailsFetched] = useState(false);
+  const { toggleBookmarkIcon } = useContext(PostContext);
   let isRequestPending = false;
 
   useEffect(() => {
@@ -35,8 +37,10 @@ function BookMark({ currentUserId, postId, isBookmarked }) {
         { withCredentials: true }
       );
 
-      if (response.data.status === 200) return true;
-      else return false;
+      if (response.data.status === 200) {
+        toggleBookmarkIcon(postId, true);
+        return true;
+      } else return false;
     } catch (err) {
       toast.error(err.response?.data);
       return false;
@@ -106,6 +110,7 @@ function BookMark({ currentUserId, postId, isBookmarked }) {
     try {
       const result = await storeBookmarkToDb("Reading List", postId);
       setLoadingIndex(false);
+
       return result;
     } catch (err) {
       toast.error(err.response?.data);
@@ -174,6 +179,7 @@ function BookMark({ currentUserId, postId, isBookmarked }) {
     if (areAllCheckedFalse) {
       setIconClicked(false);
       setShowModel(false);
+      toggleBookmarkIcon(postId, false);
     }
   };
 

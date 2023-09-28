@@ -1,5 +1,5 @@
 import "./CreatePost.css";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import axios from "../../../config/axios";
 import { useNavigate } from "react-router-dom";
 import EditorQuill from "../../Components/EditorQuill/EditorQuill";
@@ -8,6 +8,7 @@ import TextField from "@mui/material/TextField";
 import FormInput from "../../Components/Form/FormInput";
 import ImageInput from "../../Components/Form/ImageInput";
 import { toast } from "react-toastify";
+import { PostContext } from "../../../Context/PostContext";
 
 function CreatePost() {
   const [title, setTitle] = useState("");
@@ -18,6 +19,8 @@ function CreatePost() {
   const [suggestedTopics, setSuggestedTopics] = useState([]);
   const [selectedTopicsArray, setSelectedTopicsArray] = useState([]);
   const [TopicErrMsg, setTopicErrMsg] = useState("");
+
+  const { reFetchPosts } = useContext(PostContext);
 
   const navigate = useNavigate();
   const MAX_TITLE_LENGTH = 130;
@@ -41,7 +44,7 @@ function CreatePost() {
     data.set("file", file);
 
     try {
-      await toast.promise(
+      const response = await toast.promise(
         axios.post("/posts/add", data, { withCredentials: true }),
         {
           pending: "Creating post...",
@@ -50,7 +53,10 @@ function CreatePost() {
         }
       );
 
-      navigate("/");
+      if (response.statusText === "OK") {
+        navigate("/");
+        reFetchPosts();
+      }
     } catch (error) {
       toast.error(error.response.data);
       if (error.response && error.response.status === 401) {

@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import "./AuthorBlogLists.css";
 import { format } from "date-fns";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "../../../config/axios";
 import { toast } from "react-toastify";
+import { PostContext } from "../../../Context/PostContext";
 
 function AuthorBlogLists(props) {
   const {
@@ -17,6 +18,7 @@ function AuthorBlogLists(props) {
   } = props;
   const navigate = useNavigate();
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const { removePostFromHome } = useContext(PostContext);
 
   const handleDelete = e => {
     e.stopPropagation();
@@ -24,17 +26,28 @@ function AuthorBlogLists(props) {
   };
 
   const handleConfirmDelete = async () => {
+    setShowConfirmation(false);
     try {
-      const deleteBlog = await axios.delete(`/posts/delete/${_id}`, {
-        withCredentials: true,
-      });
+      const deleteBlog = await toast.promise(
+        axios.delete(`/posts/delete/${_id}`, {
+          withCredentials: true,
+        }),
+        {
+          pending: "Deleting Post...",
+          success: "Post deleted successfully!",
+          error: "Error deleting Post. Please try again later.",
+        }
+      );
 
-      toast.success(deleteBlog?.data);
       await updateTotalBlogsCount();
 
       setPostDetails(prevDetails =>
         prevDetails.filter(post => post._id !== _id)
       );
+
+      if (deleteBlog.statusText === "OK") {
+        removePostFromHome(_id);
+      }
     } catch (err) {
       toast.error(err.response?.data);
     }

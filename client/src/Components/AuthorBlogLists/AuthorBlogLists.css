@@ -17,7 +17,7 @@
 .author-blogs-content {
   flex: 1 1 auto;
   word-wrap: break-word;
-  max-width: 81%;
+  max-width: 85%;
 }
 .author-blogs-content h3 {
   font-size: 20px;
@@ -46,7 +46,8 @@
   width: auto;
   height: 100%;
   object-fit: contain;
-  max-width: 100%;
+  max-width: 120px;
+  aspect-ratio: 8/6;
 }
 
 .author-post-btn {

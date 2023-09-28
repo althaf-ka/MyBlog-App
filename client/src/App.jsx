@@ -16,6 +16,7 @@ import NotFound from "./Pages/NotFound/NotFound";
 import { Slide, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import TailSpinLoader from "./Components/Loaders/TailSpinLoader";
+import { PostContextProvider } from "../Context/PostContext";
 
 const CreatePost = lazy(() => import("./Pages/CreatePost/CreatePost"));
 const EditPost = lazy(() => import("./Pages/EditPost/EditPost"));
@@ -28,105 +29,107 @@ const BookmarkPostsView = lazy(() =>
 function App() {
   return (
     <UserContextProvider>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<IndexPage />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route
-            path="/create"
-            element={
-              <PrivateRoute>
-                <Suspense
-                  fallback={
-                    <TailSpinLoader size={70} wrapperClass="center-loader" />
-                  }
-                >
-                  <CreatePost />
-                </Suspense>
-              </PrivateRoute>
-            }
-          />
-          <Route path="/post/:id" element={<ViewPost />} />
-          <Route
-            path="/edit/:id"
-            element={
-              <PrivateRoute>
-                <Suspense
-                  fallback={
-                    <TailSpinLoader size={70} wrapperClass="center-loader" />
-                  }
-                >
-                  <EditPost />
-                </Suspense>
-              </PrivateRoute>
-            }
-          />
-          <Route path="/explore-topics" element={<ExploreTopics />} />
-          <Route
-            path="/topics/:topicName/:topicId"
-            element={<TopicDetails />}
-          />
-          <Route path="/profile/:userId" element={<Profile />} />
-          <Route
-            path="/profile/edit/:userId"
-            element={
-              <PrivateRoute>
-                <Suspense
-                  fallback={
-                    <TailSpinLoader size={70} wrapperClass="center-loader" />
-                  }
-                >
-                  <EditProfile />
-                </Suspense>
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/bookmarks/lists"
-            element={
-              <PrivateRoute>
-                <Suspense
-                  fallback={
-                    <TailSpinLoader size={70} wrapperClass="center-loader" />
-                  }
-                >
-                  <BookmarkView />
-                </Suspense>
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/bookmarks/list/:bookmarkName/:userId"
-            element={
-              <PrivateRoute>
-                <Suspense
-                  fallback={
-                    <TailSpinLoader size={70} wrapperClass="center-loader" />
-                  }
-                >
-                  <BookmarkPostsView />
-                </Suspense>
-              </PrivateRoute>
-            }
-          />
-          <Route path="/privacy" element={<PrivacyPolicy />} />
-          <Route path="*" element={<NotFound />} />
-        </Route>
-      </Routes>
-      <ToastContainer
-        position="top-center"
-        autoClose="1800"
-        hideProgressBar
-        newestOnTop
-        closeOnClick={false}
-        rtl={false}
-        pauseOnFocusLoss={false}
-        pauseOnHover={false}
-        transition={Slide}
-        theme="colored"
-        closeButton={false}
-      />
+      <PostContextProvider>
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<IndexPage />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route
+              path="/create"
+              element={
+                <PrivateRoute>
+                  <Suspense
+                    fallback={
+                      <TailSpinLoader size={70} wrapperClass="center-loader" />
+                    }
+                  >
+                    <CreatePost />
+                  </Suspense>
+                </PrivateRoute>
+              }
+            />
+            <Route path="/post/:id" element={<ViewPost />} />
+            <Route
+              path="/edit/:id"
+              element={
+                <PrivateRoute>
+                  <Suspense
+                    fallback={
+                      <TailSpinLoader size={70} wrapperClass="center-loader" />
+                    }
+                  >
+                    <EditPost />
+                  </Suspense>
+                </PrivateRoute>
+              }
+            />
+            <Route path="/explore-topics" element={<ExploreTopics />} />
+            <Route
+              path="/topics/:topicName/:topicId"
+              element={<TopicDetails />}
+            />
+            <Route path="/profile/:userId" element={<Profile />} />
+            <Route
+              path="/profile/edit/:userId"
+              element={
+                <PrivateRoute>
+                  <Suspense
+                    fallback={
+                      <TailSpinLoader size={70} wrapperClass="center-loader" />
+                    }
+                  >
+                    <EditProfile />
+                  </Suspense>
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/bookmarks/lists"
+              element={
+                <PrivateRoute>
+                  <Suspense
+                    fallback={
+                      <TailSpinLoader size={70} wrapperClass="center-loader" />
+                    }
+                  >
+                    <BookmarkView />
+                  </Suspense>
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/bookmarks/list/:bookmarkName/:userId"
+              element={
+                <PrivateRoute>
+                  <Suspense
+                    fallback={
+                      <TailSpinLoader size={70} wrapperClass="center-loader" />
+                    }
+                  >
+                    <BookmarkPostsView />
+                  </Suspense>
+                </PrivateRoute>
+              }
+            />
+            <Route path="/privacy" element={<PrivacyPolicy />} />
+            <Route path="*" element={<NotFound />} />
+          </Route>
+        </Routes>
+        <ToastContainer
+          position="top-center"
+          autoClose="1800"
+          hideProgressBar
+          newestOnTop
+          closeOnClick={false}
+          rtl={false}
+          pauseOnFocusLoss={false}
+          pauseOnHover={false}
+          transition={Slide}
+          theme="colored"
+          closeButton={false}
+        />
+      </PostContextProvider>
     </UserContextProvider>
   );
 }

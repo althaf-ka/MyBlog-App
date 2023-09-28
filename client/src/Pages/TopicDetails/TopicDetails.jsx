@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./TopicDetails.css";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "../../../config/axios";
 import InfiniteScroll from "react-infinite-scroll-component";
 import TailSpinLoader from "../../Components/Loaders/TailSpinLoader";
@@ -15,6 +15,7 @@ function TopicDetails() {
   const [header, setHeader] = useState(null);
   const [postDetails, setPostDetails] = useState([]);
   const [hasMore, setHasMore] = useState(true);
+  const navigate = useNavigate();
   let mounted = false;
 
   useEffect(() => {
@@ -24,7 +25,9 @@ function TopicDetails() {
         const { title, total } = topicHeader.data;
         setHeader({ title, total });
       } catch (err) {
-        toast.error(err.response.data);
+        if (err) {
+          navigate(-1);
+        }
       }
     };
     if (!mounted) {
