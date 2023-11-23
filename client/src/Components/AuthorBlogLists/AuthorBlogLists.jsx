@@ -98,10 +98,7 @@ function AuthorBlogLists(props) {
           </div>
         </div>
         <div className="author-blogs-image">
-          <img
-            src={`/api/uploads/postImages/${coverImageURL}`}
-            alt="Post Image"
-          />
+          <img src={coverImageURL} alt="Post Image" />
         </div>
       </div>
     </>

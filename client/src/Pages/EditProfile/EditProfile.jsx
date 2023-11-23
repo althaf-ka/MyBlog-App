@@ -11,6 +11,7 @@ import {
   MailIcon,
 } from "../../assets";
 import { toast } from "react-toastify";
+import { imageKitUpload } from "../../Services/imageKitService";
 
 const socialLinkState = { email: "", twitter: "", instagram: "", linkedin: "" };
 
@@ -30,9 +31,7 @@ function EditProfile() {
       setName(userDetails.name);
       setEmail(userDetails.email);
       setBio(userDetails.bio);
-      setPreviewProfilePicture(
-        `http://localhost:4000/uploads/profilePicture/${userDetails.profileImageURL}`
-      );
+      setPreviewProfilePicture(userDetails.profileImageURL);
       setSocialLinks(userDetails.socialLinks);
     } else {
       const controller = new AbortController();
@@ -44,9 +43,7 @@ function EditProfile() {
           setName(response.data.name);
           setEmail(response.data.email);
           setBio(response.data.bio);
-          setPreviewProfilePicture(
-            `http://localhost:4000/uploads/profilePicture/${response.data.profileImageURL}`
-          );
+          setPreviewProfilePicture(response.data.profileImageURL);
           setSocialLinks(response.data.socialLinks);
         } catch (err) {
           console.log(err);
@@ -62,20 +59,36 @@ function EditProfile() {
 
   const handleProfilePictureChange = event => {
     const file = event.target.files[0];
-    const image = new Image();
-    image.src = URL.createObjectURL(file);
 
-    image.onload = () => {
-      const minWidth = 400;
-      const minHeight = 400;
+    // Check if the file type is an image
+    if (file && file.type.startsWith("image/")) {
+      const image = new Image();
+      image.src = URL.createObjectURL(file);
 
-      if (image.width <= minWidth && image.height <= minHeight) {
-        setFile(file);
-        setPreviewProfilePicture(URL.createObjectURL(file));
-      } else {
-        alert("The Profile Picture should be less than 400 x 400 pixels");
-      }
-    };
+      image.onload = () => {
+        const minWidth = 400;
+        const minHeight = 400;
+
+        // Check if the file size is less than 5MB
+        if (file.size <= 5 * 1024 * 1024) {
+          if (image.width <= minWidth && image.height <= minHeight) {
+            setFile(file);
+            setPreviewProfilePicture(URL.createObjectURL(file));
+          } else {
+            event.target.value = null;
+            toast.error(
+              "The Profile Picture should be less than 400 x 400 pixels"
+            );
+          }
+        } else {
+          event.target.value = null;
+          toast.error("Please select an image file smaller than 5MB.");
+        }
+      };
+    } else {
+      event.target.value = null;
+      toast.error("Please select a valid image file.");
+    }
   };
 
   const handleSocialLinks = (event, linkType) => {
@@ -87,31 +100,72 @@ function EditProfile() {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
 
+  let updationInProgress = false;
+
   const handleSubmit = async event => {
     event.preventDefault();
+
+    if (updationInProgress) return;
+
+    const toastMessage = toast.loading("Updating profile...");
+    let imgLink = null;
+
+    try {
+      updationInProgress = true;
+      if (file) {
+        imgLink = await imageKitUpload(file, "Profile-Images");
+      }
+
+      const data = createFormData(imgLink);
+
+      const response = await axios.put("/users/profile/details", data, {
+        withCredentials: true,
+      });
+
+      if (response.statusText === "OK") {
+        toast.update(toastMessage, {
+          render: "Profile updated successfully!",
+          type: "success",
+          isLoading: false,
+          autoClose: 2000,
+        });
+
+        setTimeout(() => {
+          navigate("/");
+          navigate(0); // To reload the page and change the header
+        }, 1500);
+      }
+
+      // To reload the page and change the header
+    } catch (error) {
+      toast.update(toastMessage, {
+        render:
+          error.response?.data.message ||
+          error.message ||
+          "Error updating profile. Please try again later.",
+        type: "error",
+        isLoading: false,
+        autoClose: 4000,
+      });
+    } finally {
+      updationInProgress = false;
+    }
+  };
+
+  const createFormData = imgLink => {
     const data = new FormData();
     data.set("id", userDetails._id);
     data.set("name", name);
     data.set("bio", bio);
     data.set("socialLinks", JSON.stringify(socialLinks));
-    if (file) {
-      data.set("file", file);
+
+    if (imgLink !== null) {
+      data.set("profileImageURL", imgLink.url);
+      data.set("profileThumbnailUrl", imgLink.thumbnailUrl);
+      data.set("imageKitFileId", imgLink.fileId);
     }
 
-    try {
-      await toast.promise(
-        axios.put("/users/profile/details", data, { withCredentials: true }),
-        {
-          pending: "Updating profile...",
-          success: "Profile updated successfully!",
-          error: "Error updating profile. Please try again later.",
-        }
-      );
-      navigate("/");
-      navigate(0); // To reload the page and change the header
-    } catch (error) {
-      toast.error(error.response.data);
-    }
+    return data;
   };
 
   const MAX_NAME_LENGTH = 25;
@@ -142,6 +196,7 @@ function EditProfile() {
         />
 
         <ImageInput
+          moreInfo="Upload an image file that is less than 5MB in size."
           label={"Profile Picture"}
           id="profile"
           onChange={handleProfilePictureChange}

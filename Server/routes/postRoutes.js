@@ -8,7 +8,6 @@ import {
   getPostById,
   postsByAuthor,
 } from "../controllers/postController.js";
-import { postUpload } from "../utils/MulterUpload.js";
 
 const router = express.Router();
 
@@ -17,9 +16,9 @@ router.get("/", isLoggedIn, getAllPost);
 router.get("/:id", getPostById);
 router.get("/author-posts/:userId", postsByAuthor);
 
-router.post("/add", verifyToken, postUpload.single("file"), addPost);
+router.post("/add", verifyToken, addPost);
 
-router.put("/edit", verifyToken, postUpload.single("file"), editPost);
+router.put("/edit", verifyToken, editPost);
 
 router.delete("/delete/:id", verifyToken, deletePostById);
 

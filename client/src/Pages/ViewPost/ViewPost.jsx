@@ -80,10 +80,7 @@ function ViewPost() {
         <div className="author">{postInfo.author}</div>
 
         <div className="image">
-          <img
-            src={`/api/uploads/postImages/${postInfo.coverImageURL}`}
-            alt="PosterImg"
-          />
+          <img src={postInfo.coverImageURL} alt="PosterImg" />
         </div>
 
         <div className="down-section">
@@ -117,10 +114,7 @@ function ViewPost() {
 
           <div className="blog-author" onClick={handleAuthorClick}>
             <div className="author-image">
-              <img
-                src={`/api/uploads/profilePicture/${postInfo?.profileImageURL}`}
-                alt="Author"
-              />
+              <img src={postInfo?.profileImageURL} alt="Author" />
             </div>
             <div className="author-name">Written by {postInfo.author}</div>
           </div>

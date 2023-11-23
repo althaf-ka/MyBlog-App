@@ -109,10 +109,18 @@ const getAuthorDetails = userId => {
   });
 };
 
-const addAuthorDetails = (profileDetails, profileImageURL) => {
+const addAuthorDetails = profileDetails => {
   return new Promise(async (resolve, reject) => {
     try {
-      const { name, bio, socialLinks, id } = profileDetails;
+      const {
+        name,
+        bio,
+        socialLinks,
+        id,
+        profileImageURL,
+        profileThumbnailUrl,
+        imageKitFileId,
+      } = profileDetails;
 
       const updatefield = {
         name: name,
@@ -121,6 +129,8 @@ const addAuthorDetails = (profileDetails, profileImageURL) => {
       };
       if (profileImageURL) {
         updatefield.profileImageURL = profileImageURL;
+        updatefield.profileThumbnailUrl = profileThumbnailUrl;
+        updatefield.imageKitFileId = imageKitFileId;
       }
 
       const updateProfileResult = await db

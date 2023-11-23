@@ -67,10 +67,7 @@ function BookmarkView() {
             <div className="posts-img-cards">
               {bookmark.coverImageURL.map((imgUrl, imgIndex) => (
                 <div className="image-box" key={imgIndex}>
-                  <img
-                    src={`/api/uploads/postImages/${imgUrl}`}
-                    alt="posterImg"
-                  />
+                  <img src={imgUrl} alt="posterImg" />
                 </div>
               ))}
             </div>

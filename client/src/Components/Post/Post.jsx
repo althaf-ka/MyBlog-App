@@ -82,10 +82,7 @@ function Post(props) {
 
         <div className="posts-coverimg">
           <Link to={`/post/${_id}`}>
-            <img
-              src={`/api/uploads/postImages/${coverImageURL}`}
-              alt="PosterImg"
-            />
+            <img src={coverImageURL} alt="PosterImg" />
           </Link>
         </div>
       </div>

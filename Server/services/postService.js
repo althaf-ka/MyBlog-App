@@ -3,8 +3,10 @@ import collection from "../db/collection.js";
 import { db } from "../db/connection.js";
 import createError from "../utils/createError.js";
 
-const addPost = (blog, coverImageURL, user) => {
-  const { title, content, topics } = blog;
+const addPost = (blog, user) => {
+  const { title, content, coverImgURL, thumbnailUrl, topics, imageKitFileId } =
+    blog;
+
   const { _id } = user;
   return new Promise(async (resolve, reject) => {
     try {
@@ -15,7 +17,9 @@ const addPost = (blog, coverImageURL, user) => {
           userId: new ObjectId(_id),
           title: title,
           content: content,
-          coverImageURL: coverImageURL,
+          coverImageURL: coverImgURL,
+          thumbnailUrl: thumbnailUrl,
+          imageKitFileId: imageKitFileId,
           topics: topics,
           createdAt: now,
           updatedAt: null,
@@ -209,6 +213,8 @@ const getPostById = postId => {
               title: 1,
               content: 1,
               coverImageURL: 1,
+              thumbnailUrl: 1,
+              imageKitFileId: 1,
               createdAt: 1,
               updatedAt: 1,
               profileImageURL: "$author.profileImageURL",
@@ -244,8 +250,17 @@ const getPostById = postId => {
   });
 };
 
-const updatePost = (postId, blogDetails, coverImageURL) => {
-  const { title, content, removedTopics, newTopics, allTopics } = blogDetails;
+const updatePost = (postId, blogDetails) => {
+  const {
+    title,
+    content,
+    removedTopics,
+    newTopics,
+    allTopics,
+    coverImgURL,
+    thumbnailUrl,
+    imageKitFileId,
+  } = blogDetails;
 
   return new Promise(async (resolve, reject) => {
     postId = new ObjectId(postId);
@@ -259,8 +274,10 @@ const updatePost = (postId, blogDetails, coverImageURL) => {
         updatedAt: now,
       };
       //checking for new cover image Present
-      if (coverImageURL) {
-        updateFields.coverImageURL = coverImageURL;
+      if (coverImgURL && thumbnailUrl && imageKitFileId) {
+        updateFields.coverImageURL = coverImgURL;
+        updateFields.thumbnailUrl = thumbnailUrl;
+        updateFields.imageKitFileId = imageKitFileId;
       }
 
       const bulkOps = [];
@@ -395,7 +412,9 @@ const postsByAuthor = (userId, skip) => {
         .collection(collection.POSTS_COLLECTION)
         .find(
           { userId: new ObjectId(userId) },
-          { projection: { _id: 1, title: 1, coverImageURL: 1, createdAt: 1 } }
+          {
+            projection: { _id: 1, title: 1, coverImageURL: 1, createdAt: 1 },
+          }
         )
         .sort({ createdAt: -1 })
         .skip(parseInt(skip) || 0)

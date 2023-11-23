@@ -2,11 +2,7 @@ import userService from "../services/userService.js";
 import jwt from "jsonwebtoken";
 import verifyToken from "../utils/googleAuth.js";
 import createError from "../utils/createError.js";
-import path from "path";
-import fs from "fs";
-import { fileURLToPath } from "url";
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+import { imagekitDeleteFile } from "../services/imageKitService.js";
 
 export const registerUser = (req, res, next) => {
   const { name, email, password } = req.body.formData;
@@ -82,35 +78,19 @@ export const getAuthorDetails = (req, res, next) => {
 
 export const addAuthorDetails = async (req, res, next) => {
   const profileDetails = req.body;
-  const profileImageURL = req.file?.filename || null;
   const user = req.user;
+
   try {
     const currentAuthor = await userService.getAuthorDetails(profileDetails.id);
     const isAuthor = currentAuthor._id.toString() === user._id.toString();
 
     if (isAuthor) {
-      const response = await userService.addAuthorDetails(
-        profileDetails,
-        profileImageURL
-      );
+      const response = await userService.addAuthorDetails(profileDetails);
 
-      if (response.status === 200 && profileImageURL) {
-        if (currentAuthor.profileImageURL) {
-          const uploadDir = path.resolve(
-            __dirname,
-            "..",
-            "uploads",
-            "profilePicture"
-          );
-          const oldImagePath = path.join(
-            uploadDir,
-            currentAuthor.profileImageURL
-          );
-
-          // Delete the old image
-          fs.unlink(oldImagePath, err => {
-            if (err) console.log("Error in removal of old image");
-          });
+      if (response.status === 200 && profileDetails.profileImageURL) {
+        if (currentAuthor.profileImageURL && currentAuthor?.imageKitFileId) {
+          //Delete old image from image kit
+          await imagekitDeleteFile(currentAuthor.imageKitFileId);
         }
       }
 

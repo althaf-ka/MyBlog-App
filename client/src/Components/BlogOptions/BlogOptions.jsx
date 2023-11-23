@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import "./BlogOptions.css";
 import { ThreeDotsIcon } from "../../assets";
 import useClickOutside from "../../Hooks/useClickOutside";

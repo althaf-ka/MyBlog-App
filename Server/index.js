@@ -1,12 +1,11 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import * as dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
 import { connect as MongoConnect } from "./db/connection.js";
+import "dotenv/config.js";
 
-dotenv.config();
 const app = express();
 
 import userRoute from "./routes/userRoutes.js";
@@ -14,6 +13,7 @@ import postRoute from "./routes/postRoutes.js";
 import topicRoute from "./routes/topicRoutes.js";
 import applauseRoute from "./routes/applauseRoutes.js";
 import bookmarkRoute from "./routes/bookmarkRoutes.js";
+import imageKitRoute from "./routes/imageKitRoutes.js";
 
 const corsOptions = {
   origin: "*",
@@ -34,6 +34,7 @@ app.use("/posts", postRoute);
 app.use("/topics", topicRoute);
 app.use("/applauses", applauseRoute);
 app.use("/bookmarks", bookmarkRoute);
+app.use("/imagekit", imageKitRoute);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

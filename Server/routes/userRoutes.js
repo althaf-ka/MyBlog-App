@@ -11,7 +11,6 @@ import {
   loginGoogleUser,
 } from "../controllers/userController.js";
 import { verifyToken } from "../middleware/authMiddleware.js";
-import { profileUpload } from "../utils/MulterUpload.js";
 
 const router = express.Router();
 
@@ -24,11 +23,6 @@ router.post("/logout", logoutUser);
 router.post("/google/auth", registerGoogleUser);
 router.post("/google/login", loginGoogleUser);
 
-router.put(
-  "/profile/details",
-  verifyToken,
-  profileUpload.single("file"),
-  addAuthorDetails
-);
+router.put("/profile/details", verifyToken, addAuthorDetails);
 
 export default router;

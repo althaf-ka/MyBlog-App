@@ -9,6 +9,10 @@ import FormInput from "../../Components/Form/FormInput";
 import ImageInput from "../../Components/Form/ImageInput";
 import { toast } from "react-toastify";
 import { PostContext } from "../../../Context/PostContext";
+import {
+  deleteImageFromImageKit,
+  imageKitUpload,
+} from "../../Services/imageKitService";
 
 function CreatePost() {
   const [title, setTitle] = useState("");
@@ -33,36 +37,68 @@ function CreatePost() {
     });
   }, []);
 
+  let isOperationInProgress = false;
+
   const createNewPost = async e => {
     e.preventDefault();
+
+    if (isOperationInProgress) {
+      return;
+    }
+
+    const toastMessage = toast.loading("Creating post...");
+    let imgLink = null;
+
+    try {
+      isOperationInProgress = true;
+      imgLink = await imageKitUpload(files, "Post-Images");
+
+      const data = createFormData(imgLink);
+
+      const response = await axios.post("/posts/add", data, {
+        withCredentials: true,
+      });
+
+      if (response.statusText === "OK") {
+        toast.update(toastMessage, {
+          render: "Post Uploaded Successfully!",
+          type: "success",
+          isLoading: false,
+          autoClose: 4000,
+        });
+        reFetchPosts();
+        navigate("/");
+      }
+    } catch (error) {
+      toast.update(toastMessage, {
+        render: error.response?.data || error.message || "An error occurred.", //Error from backend and frontend
+        type: "error",
+        isLoading: false,
+        autoClose: 4000,
+      });
+
+      // Error during post upload, delete the image if it exists
+      if (imgLink !== null) {
+        await deleteImageFromImageKit(imgLink);
+      }
+
+      if (error.response && error.response.status === 401) {
+        navigate("/login"); // jwt token not verified, so login again
+      }
+    } finally {
+      isOperationInProgress = false;
+    }
+  };
+
+  const createFormData = imgLink => {
     const data = new FormData();
     data.set("title", title);
     data.set("content", content);
-    selectedTopicsArray.map(topic => data.append("topics[]", topic)); // To make selected topic an array
-
-    const file = files || null;
-    data.set("file", file);
-
-    try {
-      const response = await toast.promise(
-        axios.post("/posts/add", data, { withCredentials: true }),
-        {
-          pending: "Creating post...",
-          success: "Post Uploaded successfully!",
-          error: "Error creating post. Please try again later.",
-        }
-      );
-
-      if (response.statusText === "OK") {
-        navigate("/");
-        reFetchPosts();
-      }
-    } catch (error) {
-      toast.error(error.response.data);
-      if (error.response && error.response.status === 401) {
-        navigate("/login"); //jwt token not verified so login again
-      }
-    }
+    selectedTopicsArray.forEach(topic => data.append("topics[]", topic));
+    data.set("coverImgURL", imgLink.url);
+    data.set("thumbnailUrl", imgLink.thumbnailUrl);
+    data.set("imageKitFileId", imgLink.fileId);
+    return data;
   };
 
   const handleTopicChange = (event, topics) => {
@@ -95,13 +131,21 @@ function CreatePost() {
 
   const handleImageChange = e => {
     const selectedFile = e.target.files[0];
+
     // Check if the file type is an image
     if (selectedFile && selectedFile.type.startsWith("image/")) {
-      setFiles(selectedFile);
-      setImagePreview(URL.createObjectURL(selectedFile));
+      // Check if the file size is less than 5MB
+      if (selectedFile.size <= 5 * 1024 * 1024) {
+        setFiles(selectedFile);
+        setImagePreview(URL.createObjectURL(selectedFile));
+      } else {
+        e.target.value = null;
+        toast.error("Please select an image file smaller than 5MB.");
+        return;
+      }
     } else {
       e.target.value = null;
-      alert("Please select a valid image file.");
+      toast.error("Please select a valid image file.");
       return;
     }
   };
@@ -110,17 +154,19 @@ function CreatePost() {
     <div className="create-post-form-container">
       <h2>Create a Post</h2>
       <form onSubmit={createNewPost} encType="multipart/form-data">
-        <FormInput
-          label="Title"
-          id="title"
-          value={title}
-          required={true}
-          placeholder="Title"
-          maxLength={MAX_TITLE_LENGTH}
-          onChange={e => {
-            setTitle(e.target.value);
-          }}
-        />
+        <div className="input-container">
+          <FormInput
+            label="Title"
+            id="title"
+            value={title}
+            required={true}
+            placeholder="Title"
+            maxLength={MAX_TITLE_LENGTH}
+            onChange={e => {
+              setTitle(e.target.value);
+            }}
+          />
+        </div>
 
         {imagePreview && (
           <div className="create-image-view">
@@ -131,10 +177,13 @@ function CreatePost() {
             />
           </div>
         )}
+
+        {/* <ImageFileUpload /> */}
+
         <ImageInput
           label="Thumbnail"
           id="thumbnail"
-          moreInfo="Image Only"
+          moreInfo="Upload an image file that is less than 5MB in size."
           onChange={handleImageChange}
           required={true}
         />
