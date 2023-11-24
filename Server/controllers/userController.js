@@ -84,6 +84,8 @@ export const addAuthorDetails = async (req, res, next) => {
   const profileDetails = req.body;
   const profileImageURL = req.file?.filename || null;
   const user = req.user;
+
+  console.log(profileDetails);
   try {
     const currentAuthor = await userService.getAuthorDetails(profileDetails.id);
     const isAuthor = currentAuthor._id.toString() === user._id.toString();

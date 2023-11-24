@@ -9,6 +9,7 @@ import ClapButton from "../../Components/ClapButton/ClapButton";
 import BlogOptions from "../../Components/BlogOptions/BlogOptions";
 import BookMark from "../../Components/BookMark/BookMark";
 import TailSpinLoader from "../../Components/Loaders/TailSpinLoader";
+import RoundProfilePicture from "../../Components/RoundProfilePicture/RoundProfilePicture";
 import { toast } from "react-toastify";
 
 function ViewPost() {
@@ -33,8 +34,7 @@ function ViewPost() {
         if (userInfo && Object.keys(userInfo).length > 0) {
           const bookmarkResponse = await axios.get(
             `/bookmarks/users/${id}/${userInfo._id}`,
-            { signal: controller.signal },
-            { withCredentials: true }
+            { signal: controller.signal, withCredentials: true }
           );
           setPostInfo(prevValue => ({
             ...prevValue,
@@ -117,9 +117,9 @@ function ViewPost() {
 
           <div className="blog-author" onClick={handleAuthorClick}>
             <div className="author-image">
-              <img
-                src={`/api/uploads/profilePicture/${postInfo?.profileImageURL}`}
-                alt="Author"
+              <RoundProfilePicture
+                size={60}
+                imageUrl={postInfo?.profileImageURL[0]}
               />
             </div>
             <div className="author-name">Written by {postInfo.author}</div>

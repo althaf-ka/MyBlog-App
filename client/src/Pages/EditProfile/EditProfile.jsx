@@ -4,6 +4,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import axios from "../../../config/axios";
 import FormInput from "../../Components/Form/FormInput";
 import ImageInput from "../../Components/Form/ImageInput";
+import RoundProfilePicture from "../../Components/RoundProfilePicture/RoundProfilePicture";
 import {
   TwitterIcon,
   InstagramIcon,
@@ -122,11 +123,9 @@ function EditProfile() {
       <h2>Edit Profile</h2>
       <form className="edit-profile-form" onSubmit={handleSubmit}>
         {previewProfilePicture && (
-          <img
-            src={previewProfilePicture}
-            alt="Profile Preview"
-            className="preview-profile-picture"
-          />
+          <div className="preview-profile-picture">
+            <RoundProfilePicture size={125} imageUrl={previewProfilePicture} />
+          </div>
         )}
 
         <FormInput label="Email" id="email" value={email} />

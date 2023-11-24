@@ -118,7 +118,7 @@ function App() {
         </Routes>
         <ToastContainer
           position="top-center"
-          autoClose="1800"
+          autoClose="4000"
           hideProgressBar
           newestOnTop
           closeOnClick={false}
@@ -128,6 +128,7 @@ function App() {
           transition={Slide}
           theme="colored"
           closeButton={false}
+          limit={1}
         />
       </PostContextProvider>
     </UserContextProvider>

@@ -29,6 +29,7 @@ export const editPost = (req, res, next) => {
   const blogDetails = req.body;
   const coverImageURL = req.file ? req.file.filename : null;
   const user = req.user;
+
   //Taking the blog id from client and retrive from database
   postService
     .getPostById(id)

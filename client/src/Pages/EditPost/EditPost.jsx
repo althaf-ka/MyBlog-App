@@ -50,7 +50,7 @@ function EditPost() {
         title: postInfo.title,
         content: postInfo.content,
         topics: postInfo.topics?.map(topic => topic.title),
-        prevTopics: postInfo.topics,
+        prevTopics: postInfo.topics?.map(topic => topic.title),
         imageURL: `http://localhost:4000/uploads/postImages/${postInfo.coverImageURL}`,
       }));
     });
