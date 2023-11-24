@@ -1,4 +1,8 @@
 /* FORM INPUT */
+.form-group {
+  position: relative;
+}
+
 .form-group .input-box {
   width: 100%;
   padding: 10px;
@@ -6,6 +10,8 @@
   border: 1px solid #ddd;
   border-radius: 4px;
   font-size: 15px;
+  position: relative;
+  height: 40px;
 }
 
 .form-group .input-box-label {
@@ -21,8 +27,9 @@
 
 .char-count {
   position: absolute;
-  bottom: 36px;
+  top: 50%;
   right: 5px;
+  transform: translateY(-60%);
   font-size: 14px;
   color: #ccc;
 }

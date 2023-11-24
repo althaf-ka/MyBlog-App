@@ -401,6 +401,11 @@ const deletePostReference = async (postId, userId) => {
       resolve({ status: 200, message: "Post Reference Deleted " });
     } catch (error) {
       reject(createError(404, "Failed to Delete Post Reference"));
+    } finally {
+      // Delete topics docs without posts
+      await db
+        .collection(collection.TOPICS_COLLECTION)
+        .deleteMany({ posts: { $size: 0 } });
     }
   });
 };
