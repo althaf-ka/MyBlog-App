@@ -15,9 +15,11 @@ import applauseRoute from "./routes/applauseRoutes.js";
 import bookmarkRoute from "./routes/bookmarkRoutes.js";
 import imageKitRoute from "./routes/imageKitRoutes.js";
 
+const backendUrl = process.env.SITE_URL || "http://localhost:5173";
 const corsOptions = {
-  origin: "*",
+  origin: backendUrl,
   credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE"],
 };
 
 app.use(cors(corsOptions));

@@ -3,7 +3,9 @@ import axios from "../../config/axios";
 
 export const imageKitUpload = async (file, folderName) => {
   try {
-    const imageKitAuth = await axios.get("/imagekit/auth");
+    const imageKitAuth = await axios.get("/imagekit/auth", {
+      withCredentials: true,
+    });
 
     const imagekit = new ImageKit({
       publicKey: import.meta.env.VITE_IMAGEKIT_PUBLIC_KEY,

@@ -34,9 +34,9 @@ function ViewPost() {
         if (userInfo && Object.keys(userInfo).length > 0) {
           const bookmarkResponse = await axios.get(
             `/bookmarks/users/${id}/${userInfo._id}`,
-            { signal: controller.signal },
-            { withCredentials: true }
+            { signal: controller.signal, withCredentials: true }
           );
+
           setPostInfo(prevValue => ({
             ...prevValue,
             ...bookmarkResponse.data,
