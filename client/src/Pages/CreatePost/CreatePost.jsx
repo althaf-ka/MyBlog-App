@@ -53,13 +53,13 @@ function CreatePost() {
       isOperationInProgress = true;
       imgLink = await imageKitUpload(files, "Post-Images");
 
-      const data = createFormData(imgLink);
+      const postData = createJsonData(imgLink);
 
-      const response = await axios.post("/posts/add", data, {
+      const response = await axios.post("/posts/add", postData, {
         withCredentials: true,
       });
 
-      if (response.statusText === "OK") {
+      if (response?.status === 200) {
         toast.update(toastMessage, {
           render: "Post Uploaded Successfully!",
           type: "success",
@@ -90,14 +90,19 @@ function CreatePost() {
     }
   };
 
-  const createFormData = imgLink => {
-    const data = new FormData();
-    data.set("title", title);
-    data.set("content", content);
-    selectedTopicsArray.forEach(topic => data.append("topics[]", topic));
-    data.set("coverImgURL", imgLink.url);
-    data.set("thumbnailUrl", imgLink.thumbnailUrl);
-    data.set("imageKitFileId", imgLink.fileId);
+  const createJsonData = imgLink => {
+    const data = {
+      title,
+      content,
+      coverImgURL: imgLink.url,
+      thumbnailUrl: imgLink.thumbnailUrl,
+      imageKitFileId: imgLink.fileId,
+    };
+
+    if (selectedTopicsArray.length > 0) {
+      data.topics = selectedTopicsArray;
+    }
+
     return data;
   };
 

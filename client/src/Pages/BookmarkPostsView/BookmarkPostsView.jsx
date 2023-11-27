@@ -23,8 +23,7 @@ function BookmarkPostsView() {
       try {
         const bookmarkResponse = await axios.get(
           `/bookmarks/list/posts/${bookmarkName}/${userId}`,
-          { signal: controller.signal },
-          { withCredentials: true }
+          { signal: controller.signal, withCredentials: true }
         );
 
         setPosts(bookmarkResponse.data);
@@ -71,7 +70,7 @@ function BookmarkPostsView() {
             { withCredentials: true }
           );
 
-          if (deleteResponse.statusText === "OK") {
+          if (deleteResponse?.status === 200) {
             navigate(-1);
           }
         } catch (err) {

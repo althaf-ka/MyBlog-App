@@ -58,8 +58,8 @@ function EditPost() {
           title: postInfo.title,
           content: postInfo.content,
           topics: postInfo.topics?.map(topic => topic.title),
-          prevTopics: postInfo.topics,
-          imageURL: `http://localhost:4000/uploads/postImages/${postInfo.coverImageURL}`,
+          prevTopics: postInfo.topics?.map(topic => topic.title),
+          imageURL: postInfo.coverImageURL,
         }));
         setLoading(false);
       })
@@ -97,13 +97,13 @@ function EditPost() {
         imgLink = await imageKitUpload(updateImg, "Post-Images");
       }
 
-      const data = createFormData(imgLink);
+      const data = createJsonData(imgLink);
 
       const response = await axios.put("/posts/edit", data, {
         withCredentials: true,
       });
 
-      if (response.statusText === "OK") {
+      if (response?.status === 200) {
         toast.update(toastMessage, {
           render: "Post Updated Successfully!",
           type: "success",
@@ -134,19 +134,27 @@ function EditPost() {
     }
   };
 
-  const createFormData = imgLink => {
-    const data = new FormData();
-    data.set("id", id);
-    data.set("title", title);
-    data.set("content", content);
-    removedTopics?.map(topic => data.append("removedTopics[]", topic)); // To make selected topic to Array if no change no data
-    newTopics?.map(topic => data.append("newTopics[]", topic));
-    topics?.map(topic => data.append("allTopics[]", topic));
+  const createJsonData = imgLink => {
+    const data = {
+      id,
+      title,
+      content,
+    };
+
+    if (removedTopics && removedTopics.length > 0) {
+      data.removedTopics = removedTopics;
+    }
+    if (newTopics && newTopics.length > 0) {
+      data.newTopics = newTopics;
+    }
+    if (topics && topics.length > 0) {
+      data.allTopics = topics;
+    }
 
     if (imgLink !== null) {
-      data.set("coverImgURL", imgLink.url);
-      data.set("thumbnailUrl", imgLink.thumbnailUrl);
-      data.set("imageKitFileId", imgLink.fileId);
+      data.coverImgURL = imgLink.url;
+      data.thumbnailUrl = imgLink.thumbnailUrl;
+      data.imageKitFileId = imgLink.fileId;
     }
 
     return data;
@@ -181,9 +189,11 @@ function EditPost() {
         const removed = prevTopics?.filter(
           topic => !modifiedTopics.includes(topic)
         );
+        console.log(removed, "Removed ");
         const added = modifiedTopics?.filter(
           topic => !prevTopics?.includes(topic)
         );
+        console.log(added, "ADDED");
 
         setState(prevState => ({
           ...prevState,

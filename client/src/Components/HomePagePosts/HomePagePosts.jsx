@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useContext } from "react";
 import "./HomePagePosts.css";
 import Post from "../Post/Post";
 

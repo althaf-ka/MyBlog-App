@@ -23,7 +23,7 @@ function ExploreTopics() {
           id: suggestion._id,
           name: suggestion.title,
         }));
-
+        console.log(response.data);
         setSuggestions(suggestionTitles);
 
         return () => {

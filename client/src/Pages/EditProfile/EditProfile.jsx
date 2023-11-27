@@ -4,6 +4,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import axios from "../../../config/axios";
 import FormInput from "../../Components/Form/FormInput";
 import ImageInput from "../../Components/Form/ImageInput";
+import RoundProfilePicture from "../../Components/RoundProfilePicture/RoundProfilePicture";
 import {
   TwitterIcon,
   InstagramIcon,
@@ -116,13 +117,13 @@ function EditProfile() {
         imgLink = await imageKitUpload(file, "Profile-Images");
       }
 
-      const data = createFormData(imgLink);
+      const data = createJsonData(imgLink);
 
       const response = await axios.put("/users/profile/details", data, {
         withCredentials: true,
       });
 
-      if (response.statusText === "OK") {
+      if (response?.status === 200) {
         toast.update(toastMessage, {
           render: "Profile updated successfully!",
           type: "success",
@@ -152,17 +153,18 @@ function EditProfile() {
     }
   };
 
-  const createFormData = imgLink => {
-    const data = new FormData();
-    data.set("id", userDetails._id);
-    data.set("name", name);
-    data.set("bio", bio);
-    data.set("socialLinks", JSON.stringify(socialLinks));
+  const createJsonData = imgLink => {
+    const data = {
+      id: userDetails._id,
+      name: name,
+      bio: bio,
+      socialLinks: JSON.stringify(socialLinks),
+    };
 
     if (imgLink !== null) {
-      data.set("profileImageURL", imgLink.url);
-      data.set("profileThumbnailUrl", imgLink.thumbnailUrl);
-      data.set("imageKitFileId", imgLink.fileId);
+      data.profileImageURL = imgLink.url;
+      data.profileThumbnailUrl = imgLink.thumbnailUrl;
+      data.imageKitFileId = imgLink.fileId;
     }
 
     return data;
@@ -176,11 +178,9 @@ function EditProfile() {
       <h2>Edit Profile</h2>
       <form className="edit-profile-form" onSubmit={handleSubmit}>
         {previewProfilePicture && (
-          <img
-            src={previewProfilePicture}
-            alt="Profile Preview"
-            className="preview-profile-picture"
-          />
+          <div className="preview-profile-picture">
+            <RoundProfilePicture size={125} imageUrl={previewProfilePicture} />
+          </div>
         )}
 
         <FormInput label="Email" id="email" value={email} />

@@ -18,8 +18,7 @@ function BookmarkView() {
       try {
         const bookmarkResponse = await axios.get(
           `bookmarks/lists/names/${userInfo._id}`,
-          { signal: controller.signal },
-          { withCredentials: true }
+          { signal: controller.signal, withCredentials: true }
         );
 
         setBookmarkLists(bookmarkResponse.data);

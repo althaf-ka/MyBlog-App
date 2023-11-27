@@ -45,7 +45,7 @@ function AuthorBlogLists(props) {
         prevDetails.filter(post => post._id !== _id)
       );
 
-      if (deleteBlog.statusText === "OK") {
+      if (deleteBlog?.status === 200) {
         removePostFromHome(_id);
       }
     } catch (err) {
