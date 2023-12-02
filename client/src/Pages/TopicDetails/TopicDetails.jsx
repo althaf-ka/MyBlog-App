@@ -55,6 +55,10 @@ function TopicDetails() {
     }
   };
 
+  if (postDetails?.length === 0) {
+    return <TailSpinLoader size={70} wrapperClass="center-loader" />;
+  }
+
   return (
     <div className="topic-details-container">
       <div className="topic-details-header">

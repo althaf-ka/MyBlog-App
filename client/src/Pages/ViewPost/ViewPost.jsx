@@ -10,12 +10,14 @@ import BlogOptions from "../../Components/BlogOptions/BlogOptions";
 import BookMark from "../../Components/BookMark/BookMark";
 import TailSpinLoader from "../../Components/Loaders/TailSpinLoader";
 import RoundProfilePicture from "../../Components/RoundProfilePicture/RoundProfilePicture";
+import NotFound from "../../Pages/NotFound/NotFound";
 import { toast } from "react-toastify";
 
 function ViewPost() {
   const { id } = useParams();
   const [postInfo, setPostInfo] = useState(null);
   const [isUserClapped, setIsUserClapped] = useState(false);
+  const [errorOccured, setErrorOccured] = useState(false);
   const { userInfo } = useContext(UserContext);
   const navigate = useNavigate();
   const clapButtonRef = useRef(null);
@@ -44,6 +46,7 @@ function ViewPost() {
       } catch (error) {
         if (!controller.signal.aborted) {
           toast.error(error.response.data);
+          setErrorOccured(true);
         }
       }
     };
@@ -53,6 +56,10 @@ function ViewPost() {
       controller.abort();
     };
   }, [userInfo?._id]);
+
+  if (errorOccured) {
+    return <NotFound message="Post Not Found!" />;
+  }
 
   if (!postInfo)
     return <TailSpinLoader size={70} wrapperClass="center-loader" />;

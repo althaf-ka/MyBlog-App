@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
 import "./NotFound.css";
 
-function NotFound() {
+function NotFound({ message = "An error has occurred." }) {
   return (
     <div className="notfound-container">
-      <h1>An error as occured.</h1>
+      <h1>{message}</h1>
       <h1>
         <span className="ascii"> (╯°□°）╯︵ ┻━┻</span>
       </h1>

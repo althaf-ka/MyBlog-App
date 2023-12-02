@@ -39,11 +39,12 @@ function Header() {
   });
 
   const logout = () => {
-    axios.defaults.withCredentials = true;
-    axios.post("/users/logout").then(response => {
-      setUserInfo(null);
-      window.location.reload();
-    });
+    axios
+      .post("/users/logout", {}, { withCredentials: true })
+      .then(response => {
+        setUserInfo(null);
+        window.location.reload();
+      });
   };
 
   const handleOptionClick = index => {

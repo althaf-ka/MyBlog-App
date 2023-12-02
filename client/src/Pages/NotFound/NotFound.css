@@ -9,6 +9,7 @@
   align-items: center;
   flex-direction: column;
   user-select: none;
+  text-align: center;
 }
 .notfound-container h1 {
   margin-bottom: 0;
@@ -22,6 +23,9 @@
 
 @media (max-width: 768px) {
   .notfound-container h1 {
-    font-size: 1.8rem;
+    font-size: 1.4rem;
+  }
+  .ascii {
+    font-size: 1.4rem;
   }
 }

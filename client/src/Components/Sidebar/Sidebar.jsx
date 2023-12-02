@@ -42,7 +42,7 @@ function Sidebar({ handleClick }) {
                 Home
               </Link>
             </li>
-            {userInfo && (
+            {userInfo?._id && (
               <li>
                 <Link className="nav-link" to="/create">
                   <CreatePostIcon />
@@ -56,7 +56,7 @@ function Sidebar({ handleClick }) {
                 Topics
               </Link>
             </li>
-            {userInfo && (
+            {userInfo?._id && (
               <li>
                 <Link className="nav-link" to={`/profile/${userInfo?._id}`}>
                   <ProfileIcon />
@@ -64,7 +64,7 @@ function Sidebar({ handleClick }) {
                 </Link>
               </li>
             )}
-            {userInfo && (
+            {userInfo?._id && (
               <li>
                 <Link
                   className="nav-link"
@@ -75,7 +75,7 @@ function Sidebar({ handleClick }) {
                 </Link>
               </li>
             )}
-            {userInfo && (
+            {userInfo?._id && (
               <li>
                 <Link className="nav-link" to={"/bookmarks/lists"}>
                   <BookmarkSideIcon />

@@ -4,10 +4,12 @@ import axios from "../../../config/axios";
 import { ReactSearchAutocomplete } from "react-search-autocomplete";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import TailSpinLoader from "../../Components/Loaders/TailSpinLoader";
 
 function ExploreTopics() {
   const [suggestions, setSuggestions] = useState([]);
   const [showMore, setShowMore] = useState(false);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,6 +27,7 @@ function ExploreTopics() {
         }));
 
         setSuggestions(suggestionTitles);
+        setLoading(false);
 
         return () => {
           controller.abort();
@@ -58,6 +61,8 @@ function ExploreTopics() {
       [firstLetter]: [...(acc[firstLetter] || []), topic],
     };
   }, {});
+
+  if (loading) return <TailSpinLoader size={70} wrapperClass="center-loader" />;
 
   return (
     <div className="topic-explore-container">
