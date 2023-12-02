@@ -15,6 +15,8 @@ function AuthorBlogLists(props) {
     setPostDetails,
     isAuthor,
     updateTotalBlogsCount,
+    deleteInProgress,
+    setDeleteInProgress,
   } = props;
   const navigate = useNavigate();
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -26,7 +28,11 @@ function AuthorBlogLists(props) {
   };
 
   const handleConfirmDelete = async () => {
+    if (deleteInProgress) return;
+
+    setDeleteInProgress(true);
     setShowConfirmation(false);
+
     try {
       const deleteBlog = await toast.promise(
         axios.delete(`/posts/delete/${_id}`, {
@@ -50,8 +56,10 @@ function AuthorBlogLists(props) {
       }
     } catch (err) {
       toast.error(err.response?.data);
+    } finally {
+      setDeleteInProgress(false);
+      setShowConfirmation(false);
     }
-    setShowConfirmation(false);
   };
 
   const handleCancelDelete = () => {
@@ -87,7 +95,11 @@ function AuthorBlogLists(props) {
             {/* Displaying the delete and edit btn */}
             {isAuthor && (
               <div className="author-post-btn">
-                <button type="button" onClick={handleDelete}>
+                <button
+                  type="button"
+                  onClick={handleDelete}
+                  disabled={deleteInProgress} //If delete in progress button gets disabled
+                >
                   <i className="fa fa-trash-o" aria-hidden="true"></i>
                 </button>
                 <Link to={`/edit/${_id}`}>

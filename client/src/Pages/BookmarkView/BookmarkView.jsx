@@ -30,7 +30,7 @@ function BookmarkView() {
       }
     };
 
-    //To prevent undefined api call till userId gets
+    // To prevent undefined api call till userId gets
     if (userInfo && Object.keys(userInfo).length > 0) {
       fetchBookmarkNames();
     }
@@ -39,6 +39,19 @@ function BookmarkView() {
       controller.abort();
     };
   }, [userInfo]);
+
+  // Add a default "Reading List" if bookmarkLists is empty
+  useEffect(() => {
+    if (!isLoading && bookmarkLists.length === 0) {
+      setBookmarkLists([
+        {
+          name: "Reading List",
+          storyCount: 0,
+          coverImageURL: [], // No image for the default Reading List
+        },
+      ]);
+    }
+  }, [isLoading, bookmarkLists]);
 
   const handleListClick = bookmarkName => {
     const formattedBookmark = bookmarkName.toLowerCase().replace(/\s+/g, "-");

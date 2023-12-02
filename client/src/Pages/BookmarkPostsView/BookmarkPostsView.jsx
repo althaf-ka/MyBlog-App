@@ -9,12 +9,14 @@ import DropdownMenu from "../../Components/DropdownMenu/DropdownMenu";
 import useClickOutside from "../../Hooks/useClickOutside";
 import TailSpinLoader from "../../Components/Loaders/TailSpinLoader";
 import { toast } from "react-toastify";
+import NotFound from "../NotFound/NotFound";
 
 function BookmarkPostsView() {
   const { bookmarkName, userId } = useParams();
   const { userInfo } = useContext(UserContext);
   const [optionsVisible, setOptionsVisible] = useState(false);
   const [posts, setPosts] = useState([]);
+  const [bookmarkNotFound, setBookmarkNotFound] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,6 +27,14 @@ function BookmarkPostsView() {
           `/bookmarks/list/posts/${bookmarkName}/${userId}`,
           { signal: controller.signal, withCredentials: true }
         );
+
+        if (
+          bookmarkResponse.data === "" &&
+          bookmarkResponse.data.length === 0
+        ) {
+          setBookmarkNotFound(true);
+          return;
+        }
 
         setPosts(bookmarkResponse.data);
       } catch (error) {
@@ -48,8 +58,8 @@ function BookmarkPostsView() {
     setOptionsVisible(prevState => !prevState);
   };
 
-  if (posts.length === 0) {
-    return <TailSpinLoader size={60} />;
+  if (posts.length === 0 && !bookmarkNotFound) {
+    return <TailSpinLoader size={60} wrapperClass="center-loader" />;
   }
 
   const options = [{ name: "Delete this List", path: false }];
@@ -79,6 +89,10 @@ function BookmarkPostsView() {
       }
     }
   };
+
+  if (bookmarkNotFound) {
+    return <NotFound message="Empty bookmarks. Add posts now!" />;
+  }
 
   return (
     <div className="bookmark-posts-view-container">

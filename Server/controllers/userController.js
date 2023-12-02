@@ -35,7 +35,7 @@ export const loginUser = (req, res, next) => {
             .cookie("token", token, {
               httpOnly: true,
               secure: true,
-              sameSite: "none",
+              sameSite: "None",
               maxAge: 24 * 60 * 60 * 1000, // 1 days in milliseconds
             })
             .json({ _id, email, name });
@@ -48,10 +48,13 @@ export const loginUser = (req, res, next) => {
 };
 
 export const logoutUser = (req, res) => {
-  res.clearCookie("token").status(200).json({
-    status: 200,
-    message: "Logged Out Sucessfully",
-  });
+  res
+    .clearCookie("token", { httpOnly: true, secure: true, sameSite: "None" })
+    .status(200)
+    .json({
+      status: 200,
+      message: "Logged Out Sucessfully",
+    });
 };
 
 export const getUserDetail = (req, res) => {

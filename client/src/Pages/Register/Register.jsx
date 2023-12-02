@@ -14,23 +14,30 @@ function Register() {
     email: "",
     password: "",
   });
+  const [loading, setLoading] = useState(false);
   const [errMessage, setErrMessage] = useState("");
 
   const navigate = useNavigate();
 
   const register = event => {
     event.preventDefault();
+
+    if (loading) return;
+
+    setLoading(true);
+
     axios
       .post("/users/register", { formData })
-      .then(response => {
+      .then(res => {
         toast.success("Successfully Signed Up");
         navigate("/login");
       })
       .catch(err => {
-        console.log(err, "err");
-
         if (err.response)
           setErrMessage(err.response.data), toast.error(err.response.data);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
 
@@ -82,11 +89,15 @@ function Register() {
         </div>
       </form>
 
-      <h3 className="or-google">OR</h3>
+      {!loading && (
+        <>
+          <h3 className="or-google">OR</h3>
 
-      <div className="google-btn-auth">
-        <GoogleAuth action={"register"} setErrMessage={setErrMessage} />
-      </div>
+          <div className="google-btn-auth">
+            <GoogleAuth action={"register"} setErrMessage={setErrMessage} />
+          </div>
+        </>
+      )}
     </div>
   );
 }

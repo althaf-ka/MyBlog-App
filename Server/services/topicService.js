@@ -35,6 +35,7 @@ const totalBlogsInTopic = topicId => {
         );
       resolve(TotalTopicBlogs);
     } catch (err) {
+      console.log(err);
       reject(createError(404, `Topics Fetching Error`));
     }
   });

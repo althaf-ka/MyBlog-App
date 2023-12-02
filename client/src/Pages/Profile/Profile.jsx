@@ -23,6 +23,7 @@ function Profile() {
   const [postDetails, setPostDetails] = useState([]);
   const [hasMore, setHasMore] = useState(false);
   const [isAuthor, setIsAuthor] = useState(false);
+  const [deleteInProgress, setDeleteInProgress] = useState(false);
   const { userInfo } = useContext(UserContext);
   let mounted = false;
 
@@ -89,6 +90,9 @@ function Profile() {
       totalBlogs: prevUserDetails?.totalBlogs - 1,
     }));
   };
+
+  if (!userDetails)
+    return <TailSpinLoader size={70} wrapperClass="center-loader" />;
 
   return (
     <>
@@ -159,7 +163,7 @@ function Profile() {
             dataLength={postDetails.length}
             next={loadMore}
             hasMore={hasMore}
-            loader={<TailSpinLoader size={60} />}
+            loader={<TailSpinLoader size={40} />}
             scrollThreshold={0.8}
             style={{ overflow: "none" }}
             endMessage={<EndMessage />}
@@ -171,6 +175,8 @@ function Profile() {
                 setPostDetails={setPostDetails}
                 isAuthor={isAuthor}
                 updateTotalBlogsCount={updateTotalBlogsCount}
+                deleteInProgress={deleteInProgress}
+                setDeleteInProgress={setDeleteInProgress}
               />
             ))}
           </InfiniteScroll>

@@ -4,6 +4,7 @@
 }
 .bookmark-icon {
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 .bookmark-icon:hover {
   stroke: #0e1111;

@@ -15,7 +15,7 @@ export function PostContextProvider({ children }) {
       loadMorePosts();
       mounted = true;
     }
-  }, []);
+  }, [posts]);
 
   const loadMorePosts = async () => {
     try {
@@ -34,8 +34,8 @@ export function PostContextProvider({ children }) {
   };
 
   const reFetchPosts = () => {
-    setPosts([]);
-    setHasMore(true); // This will trigger loadMorePosts
+    setPosts([]); //Fetchs Posts in UseEffect
+    setHasMore(true);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 

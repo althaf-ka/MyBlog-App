@@ -1,7 +1,6 @@
 import React, { useContext } from "react";
 import "./HomePagePosts.css";
 import Post from "../Post/Post";
-
 import InfiniteScroll from "react-infinite-scroll-component";
 import TailSpinLoader from "../Loaders/TailSpinLoader";
 import EndMessage from "../EndMessage/EndMessage";
@@ -9,10 +8,15 @@ import ScrollToTopButton from "../ScrollToTopButton/ScrollToTopButton";
 import { UserContext } from "../../../Context/UserContext";
 
 import { PostContext } from "../../../Context/PostContext";
+import { toast } from "react-toastify";
 
 function HomePagePosts() {
   const { userInfo } = useContext(UserContext);
   const { posts, hasMore, loadMorePosts } = useContext(PostContext);
+
+  if (posts?.length === 0) {
+    return <TailSpinLoader size={70} wrapperClass="center-loader" />;
+  }
 
   return (
     <>

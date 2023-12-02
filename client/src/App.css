@@ -13,3 +13,7 @@ main {
   margin: 0 auto;
   margin-top: 80px;
 }
+
+div {
+  -webkit-tap-highlight-color: transparent;
+}

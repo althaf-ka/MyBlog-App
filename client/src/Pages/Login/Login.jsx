@@ -13,6 +13,7 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errMessage, setErrMessage] = useState("");
+  const [loading, setLoading] = useState(false);
   const { userInfo, setUserInfo } = useContext(UserContext);
 
   const navigate = useNavigate();
@@ -25,9 +26,17 @@ function Login() {
 
   const login = async event => {
     event.preventDefault();
-    axios.defaults.withCredentials = true;
+
+    if (loading) return;
+
+    setLoading(true);
+
     try {
-      const response = await axios.post("/users/login", { email, password });
+      const data = { email, password };
+
+      const response = await axios.post("/users/login", data, {
+        withCredentials: true,
+      });
       //checking if there user and also sending jwt token to store in cookie
       if (response.data) {
         const { _id, email, name } = response.data;
@@ -38,8 +47,11 @@ function Login() {
       //setting other login errors
       setErrMessage(err.response.data);
       toast.error(err.response.data);
+    } finally {
+      setLoading(false);
     }
   };
+
   return (
     <div className="login-container">
       <form className="login" onSubmit={login}>
@@ -67,15 +79,19 @@ function Login() {
         </div>
       </form>
 
-      <h3 className="or-google">OR</h3>
+      {!loading && (
+        <>
+          <h3 className="or-google">OR</h3>
 
-      <div className="google-btn-auth">
-        <GoogleAuth
-          action={"login"}
-          setUserInfo={setUserInfo}
-          setErrMessage={setErrMessage}
-        />
-      </div>
+          <div className="google-btn-auth">
+            <GoogleAuth
+              action={"login"}
+              setUserInfo={setUserInfo}
+              setErrMessage={setErrMessage}
+            />
+          </div>
+        </>
+      )}
     </div>
   );
 }
