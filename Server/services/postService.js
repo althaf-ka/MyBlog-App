@@ -26,7 +26,7 @@ const addPost = (blog, coverImageURL, user) => {
 
       if (topics) {
         // Create an array of bulk write operations for each topics
-        const bulkOps = topics.map(topic => ({
+        const bulkOps = topics.map((topic) => ({
           updateOne: {
             filter: { title: topic },
             update: {
@@ -52,7 +52,7 @@ const addPost = (blog, coverImageURL, user) => {
   });
 };
 
-const getAllPost = skip => {
+const getAllPost = (skip) => {
   return new Promise(async (resolve, reject) => {
     try {
       const blogs = await db
@@ -179,7 +179,7 @@ const getAllPostWithBookmarks = (userId, skip) => {
   });
 };
 
-const getPostById = postId => {
+const getPostById = (postId) => {
   return new Promise(async (resolve, reject) => {
     try {
       const singleBlog = await db
@@ -265,7 +265,7 @@ const updatePost = (postId, blogDetails, coverImageURL) => {
 
       const bulkOps = [];
       //remove topic from topic collection
-      removedTopics?.forEach(topic => {
+      removedTopics?.forEach((topic) => {
         bulkOps.push({
           updateOne: {
             filter: { title: topic },
@@ -278,7 +278,7 @@ const updatePost = (postId, blogDetails, coverImageURL) => {
         });
       });
       //add new Topics to topics collection
-      newTopics?.forEach(topic => {
+      newTopics?.forEach((topic) => {
         bulkOps.push({
           updateOne: {
             filter: { title: topic },
@@ -332,11 +332,11 @@ const updatePost = (postId, blogDetails, coverImageURL) => {
   });
 };
 
-const deletePostById = postId => {
+const deletePostById = (postId) => {
   return new Promise((resolve, reject) => {
     db.collection(collection.POSTS_COLLECTION)
       .deleteOne({ _id: new ObjectId(postId) })
-      .then(response => {
+      .then((response) => {
         if (response.deletedCount === 0) {
           reject(createError(404, "Failed to Delete the Post"));
         }

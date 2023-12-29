@@ -14,12 +14,12 @@ export const addPost = (req, res, next) => {
   //Saving blog Post to database
   postService
     .addPost(blog, coverImageURL, user)
-    .then(response => {
+    .then((response) => {
       res
         .status(response.status || 200)
         .json(response.message || "Sucessfully Posted ");
     })
-    .catch(err => {
+    .catch((err) => {
       next(err);
     });
 };
@@ -33,7 +33,7 @@ export const editPost = (req, res, next) => {
   //Taking the blog id from client and retrive from database
   postService
     .getPostById(id)
-    .then(currentBlog => {
+    .then((currentBlog) => {
       //Checking wheather the authorId from current Blog is same as in cookie
       const isAuthor = currentBlog?.userId.toString() === user._id;
       if (!isAuthor) {
@@ -55,7 +55,7 @@ export const editPost = (req, res, next) => {
               "postImages"
             );
             const filePath = path.join(uploadDir, currentBlog.coverImageURL);
-            fs.unlink(filePath, err => {
+            fs.unlink(filePath, (err) => {
               if (err) console.log(err);
             });
           }
@@ -66,14 +66,14 @@ export const editPost = (req, res, next) => {
       //Updating the database
       postService
         .updatePost(id, blogDetails, coverImageURL)
-        .then(response => {
+        .then((response) => {
           res.status(200).json({ message: response });
         })
-        .catch(err => {
+        .catch((err) => {
           next(err);
         });
     })
-    .catch(err => {
+    .catch((err) => {
       next(err);
     });
 };
@@ -104,10 +104,10 @@ export const getPostById = (req, res, next) => {
 
   postService
     .getPostById(postId)
-    .then(blogPost => {
+    .then((blogPost) => {
       res.status(200).json(blogPost);
     })
-    .catch(err => {
+    .catch((err) => {
       next(err);
     });
 };
@@ -142,10 +142,10 @@ export const deletePostById = async (req, res, next) => {
 export const postsByAuthor = (req, res, next) => {
   postService
     .postsByAuthor(req.params.userId, req.query.skip)
-    .then(response => {
+    .then((response) => {
       res.status(200).json(response);
     })
-    .catch(err => {
+    .catch((err) => {
       next(err);
     });
 };
