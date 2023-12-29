@@ -1,8 +1,16 @@
 import multer from "multer";
+import fs from "fs";
 
-const storage = destination =>
+const ensureDirectoryExists = (directory) => {
+  if (!fs.existsSync(directory)) {
+    fs.mkdirSync(directory, { recursive: true });
+  }
+};
+
+const storage = (destination) =>
   multer.diskStorage({
     destination: function (req, file, cb) {
+      ensureDirectoryExists(destination);
       cb(null, destination);
     },
     filename: function (req, file, cb) {
@@ -11,7 +19,10 @@ const storage = destination =>
     },
   });
 
-export const postUpload = multer({ storage: storage("./uploads/postImages/") });
+export const postUpload = multer({
+  storage: storage("./uploads/postImages/"),
+});
+
 export const profileUpload = multer({
   storage: storage("./uploads/profilePicture/"),
 });
