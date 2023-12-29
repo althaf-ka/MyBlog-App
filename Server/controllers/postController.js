@@ -9,12 +9,12 @@ export const addPost = (req, res, next) => {
   //Saving blog Post to database
   postService
     .addPost(blogDetails, user)
-    .then(response => {
+    .then((response) => {
       res
         .status(response.status || 200)
         .json(response.message || "Sucessfully Posted ");
     })
-    .catch(err => {
+    .catch((err) => {
       next(err);
     });
 };
@@ -78,10 +78,10 @@ export const getPostById = (req, res, next) => {
 
   postService
     .getPostById(postId)
-    .then(blogPost => {
+    .then((blogPost) => {
       res.status(200).json(blogPost);
     })
-    .catch(err => {
+    .catch((err) => {
       next(err);
     });
 };
@@ -113,10 +113,10 @@ export const deletePostById = async (req, res, next) => {
 export const postsByAuthor = (req, res, next) => {
   postService
     .postsByAuthor(req.params.userId, req.query.skip)
-    .then(response => {
+    .then((response) => {
       res.status(200).json(response);
     })
-    .catch(err => {
+    .catch((err) => {
       next(err);
     });
 };

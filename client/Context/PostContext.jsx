@@ -26,9 +26,10 @@ export function PostContextProvider({ children }) {
       if (blogPosts.data.length === 0) {
         setHasMore(false);
       } else {
-        setPosts(prevPosts => [...prevPosts, ...blogPosts.data]);
+        setPosts((prevPosts) => [...prevPosts, ...blogPosts.data]);
       }
     } catch (err) {
+      console.log(err);
       toast.error(err.response?.data);
     }
   };
@@ -39,11 +40,11 @@ export function PostContextProvider({ children }) {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const removePostFromHome = postId => {
-    const postIndex = posts.findIndex(post => post._id === postId);
+  const removePostFromHome = (postId) => {
+    const postIndex = posts.findIndex((post) => post._id === postId);
 
     if (postIndex !== -1) {
-      setPosts(prevPosts => {
+      setPosts((prevPosts) => {
         const updatedPosts = [...prevPosts];
         updatedPosts.splice(postIndex, 1);
         return updatedPosts;
@@ -52,10 +53,10 @@ export function PostContextProvider({ children }) {
   };
 
   const toggleBookmarkIcon = (postId, toggle) => {
-    const postIndex = posts.findIndex(post => post._id === postId);
+    const postIndex = posts.findIndex((post) => post._id === postId);
 
     if (postIndex !== -1) {
-      setPosts(prevPosts => {
+      setPosts((prevPosts) => {
         const updatedPosts = [...prevPosts];
         updatedPosts[postIndex].isBookmarked = toggle;
         return updatedPosts;
