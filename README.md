@@ -53,7 +53,7 @@ Made with ❤️ by MERN Stack
 - Node.js and Express.js backend
 - MongoDB serves as the primary database
 
-### Image Uploads
+## Image Uploads
 **`main` Branch**
 - Utilizes Multer for local image uploads
 - 
