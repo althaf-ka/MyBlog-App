@@ -79,7 +79,6 @@ To run this project, you will need to add the following environment variables to
 VITE_BACKEND_URL=your_backend_url
 
 VITE_GOOGLE_CLIENT_ID=your_google_client_id
-
 ```
 
 
@@ -91,7 +90,6 @@ VITE_GOOGLE_CLIENT_ID=your_google_client_id
 VITE_IMAGEKIT_PUBLIC_KEY=your_imagekit_public_key
 
 VITE_IMAGEKIT_URL_ENDPOINT=your_imagekit_url_endpoint
-
 ```
 
   
@@ -115,7 +113,6 @@ JWT_SECRET=your_jwt_secret
 MONGO_DB_URL=your_mongo_db_url
 
 SITE_URL=your_site_url or localhost
-
 ```
 
   
@@ -131,7 +128,6 @@ IMAGEKIT_PRIVATE_KEY=your_imagekit_private_key
 IMAGEKIT_PUBLIC_KEY=your_imagekit_public_key
 
 IMAGEKIT_URL_ENDPOINT=your_imagekit_url_endpoint
-
 ```
 
 
