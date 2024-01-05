@@ -101,7 +101,6 @@ VITE_IMAGEKIT_URL_ENDPOINT=your_imagekit_url_endpoint
   
 
 ```
-
 GOOGLE_CLIENT_ID=your_google_client_id
 
 GOOGLE_CLIENT_SECRET=your_google_client_secret
@@ -122,7 +121,6 @@ SITE_URL=your_site_url or localhost
   
 
 ```
-
 IMAGEKIT_PRIVATE_KEY=your_imagekit_private_key
 
 IMAGEKIT_PUBLIC_KEY=your_imagekit_public_key
